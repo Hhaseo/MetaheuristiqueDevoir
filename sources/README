@@ -1,0 +1,17 @@
+INCOP Library version1.1
+
+This C++ library implements local search methods for solving combinatorial optimization problems.
+
+It works on Linux operating system, with g++ (2.95 or 3.3) compiler
+
+The makefile file allows to build the executable files (one per application : for example colorcsp
+for graph coloring problemes solved as Max-CSP problems).
+
+The usermanual presents how to use the library to solve the yet implemented problems (extension binary CSPs, graph coloring problems,
+clique problems, CELAR frequency assignment problems, random CSPs)  with the implemented methods.
+
+The presentation paper explains the architecture of the software and how one can implement a new metaheuristic
+or a new problem by specializing C++ classes.
+
+The documentation presents the classes, attributes and methods.
+
