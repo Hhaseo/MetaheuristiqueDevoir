@@ -1,3 +1,4 @@
+#include <ctime>
 /* Les définitions des classes de la partie algorithme + OpProblem */
 /** the definitions of classes of the algorithmic part + OpProblem */
 
@@ -8,6 +9,26 @@ class Metaheuristic;
 class NeighborhoodSearch;
 class Move;
 
+
+/* ----------------------------- BVNS ----------------------------- */
+class BVNSAlgorithm : IncompleteAlgorithm
+{
+	public:
+		int k;
+		int maxTime;
+		time_t startTime;
+		time_t currTime;
+		BVNSAlgorithm(int k, int maxTime);
+		~BVNSAlgorithm(){};
+		/** walk for a particule */
+		void randomwalk (OpProblem* problem, Configuration* configuration);
+		void initthreshold(Configuration** population, int popsize);
+		/** Run the algorithm on a population (array of configurations) */
+		void run (OpProblem *problem,Configuration * initSolution);
+		int neighborhoodChange(Configuration* s, Configuration* t, int i);
+		Configuration* firstImprovement(Configuration* s);
+		Configuration* shake(Configuration* s,int i);
+}
 
 
 /* la classe Configuration  le champ config comprend la configuration elle-même sous forme de tableau d'entiers
@@ -367,6 +388,7 @@ returns 1 if a move has been done and 0 if no move has been done */
 
 
 };
+
 
 class LSAlgorithmGWW: public LSAlgorithm
 {public :

@@ -1,3 +1,5 @@
+#include <incop.h>
+
 /* Echange des valeurs de deux variables */
 /** Exchange the values of two variables */
 class SwapMove : public Move
@@ -21,4 +23,17 @@ class ExchangeMove : public SwapMove
 int eqmove(Move* move);
 void copymove (Move* move);
 Move* computetabumove(Configuration* config);
+};
+
+
+class FlipMove : public Move
+{
+public :
+	int k;
+	OpProblem* problem;
+	FlipMove(int k, OpProblem* problem);	
+    ~FlipMove() {;};   
+	int eqmove(Move* move);
+	void copymove (Move* move);
+	Move* computetabumove(Configuration* config);
 };

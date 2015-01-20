@@ -24,6 +24,42 @@ extern Stat_GWW * Statistiques; // defini dans incoputil
 extern int TRACEMODE;    // indicateur de trace
 extern ofstream* ofile;  // le fichier de sortie
  
+/* --- BVNS --- */
+
+BVNSAlgorithm::BVNSAlgorithm (int k, int maxTime) : k(k),maxTime(maxTime) { time(&startTime); };
+void BVNSAlgorithm::BVNSAlgorithm::run (OpProblem *problem, Configuration* initSolution)
+{
+	Configuration* s = initSolution;
+	do
+	{
+		int i=0;
+		do
+		{
+			Configuration* firstImproved = firstImprovement(shake(s,i));
+			i = neighborhoodChange(s,improved,i);
+		} while (i < k)
+	} while ( difftime(startTime,time(currTime)) < maxTime)
+}
+void BVNSAlgorithm::BVNSAlgorithm::neighborhoodChange(Configuration* s, Configuration* t, int i)
+{
+	if (t->valuation < s->valuation)
+	{
+		//*s = *t;
+		//ou?
+		s = t
+		return 1;
+	}
+	return i+1;
+}
+
+void BVNSAlgorithm::randomwalk (OpProblem* problem, Configuration* configuration)
+{
+}
+void BVNSAlgorithm::initthreshold(Configuration** population, int popsize)
+{
+}
+
+/* --- ---- --- */
 
 
 // les constructeurs et destructeurs

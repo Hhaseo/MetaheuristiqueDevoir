@@ -534,8 +534,13 @@ IncompleteAlgorithm* algo_creation(char** argv, int& narg, int& taille, int& gra
   if (method == "gww" || method =="gww-killworst"|| method == "gww-nothreshold" || method == "gww-adapt" || method == "gww-adaptkillworst"
       || method == "gww-mediandist" || method == "gww-bestdist")
     algo= algo_gww (argv,narg,method,taille,liste_methodes);	
-  else {algo = algo_marche (argv,narg,method,0);
-  taille=1;   
+  else {
+	  
+	  if (method=="bvns") {
+		  printf("a implementer"); //TODO
+		  }
+	else{ algo = algo_marche (argv,narg,method,0);
+		  taille=1;   }
   }
   algo->methodname=method;
   return algo;
