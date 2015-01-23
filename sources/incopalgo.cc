@@ -36,17 +36,17 @@ void BVNSAlgorithm::BVNSAlgorithm::run (OpProblem *problem, Configuration* initS
 		do
 		{
 			Configuration* firstImproved = firstImprovement(shake(s,i));
-			i = neighborhoodChange(s,improved,i);
-		} while (i < k)
-	} while ( difftime(startTime,time(currTime)) < maxTime)
+			i = neighborhoodChange(s,firstImproved,i);
+		} while (i < k);
+	} while ( difftime(startTime,time(&currTime)) < maxTime);
 }
-void BVNSAlgorithm::BVNSAlgorithm::neighborhoodChange(Configuration* s, Configuration* t, int i)
+int BVNSAlgorithm::BVNSAlgorithm::neighborhoodChange(Configuration* s, Configuration* t, int i)
 {
 	if (t->valuation < s->valuation)
 	{
 		//*s = *t;
 		//ou?
-		s = t
+		s = t;
 		return 1;
 	}
 	return i+1;
@@ -57,6 +57,15 @@ void BVNSAlgorithm::randomwalk (OpProblem* problem, Configuration* configuration
 }
 void BVNSAlgorithm::initthreshold(Configuration** population, int popsize)
 {
+}
+
+Configuration* BVNSAlgorithm::shake(Configuration* s,int i)
+{
+	return s;
+}
+Configuration* BVNSAlgorithm::firstImprovement(Configuration* s)
+{
+	return s;
 }
 
 /* --- ---- --- */
