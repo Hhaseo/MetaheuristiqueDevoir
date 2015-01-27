@@ -17,6 +17,7 @@ using namespace std;
 #include "timer.h"
 #include "incop.h"
 #include "incoputil.h"
+#include "csproblem.h"
 
 
 // les variables globales
@@ -26,20 +27,42 @@ extern ofstream* ofile;  // le fichier de sortie
  
 /* --- BVNS --- */
 
-BVNSAlgorithm::BVNSAlgorithm (int k, int maxTime) : k(k),maxTime(maxTime) { time(&startTime); };
-void BVNSAlgorithm::BVNSAlgorithm::run (OpProblem *problem, Configuration* initSolution)
+BVNSAlgorithm::BVNSAlgorithm (int kmax, int maxTime) : kmax(kmax),maxTime(maxTime) 
+{ 
+	time(&startTime);
+	movements.push_back(new PFlip(5)); // remove 
+};
+void BVNSAlgorithm::BVNSAlgorithm::run (OpProblem *problem, Configuration* s)
 {
-	Configuration* s = initSolution;
+	previous = new Configuration(s->nbvar);
+	previous->copy_element(s);
 	do
 	{
 		int i=0;
 		do
-		{
-			Configuration* firstImproved = firstImprovement(shake(s,i));
-			i = neighborhoodChange(s,firstImproved,i);
-		} while (i < k);
+		{			
+			movements[i]->shake(problem,s);
+			walkalgo->randomwalk(problem,s);
+			
+			if (previous->valuation < s->valuation)
+			{
+				previous->copy_element(s);
+				i = 0;
+			}
+			else
+			{
+				s->copy_element(previous);
+				i++;
+			}			
+		} while (i < kmax);
 	} while ( difftime(startTime,time(&currTime)) < maxTime);
+	
+	if (previous->valuation > s->valuation)
+	{
+		s->copy_element(previous);
+	}		
 }
+/*
 int BVNSAlgorithm::BVNSAlgorithm::neighborhoodChange(Configuration* s, Configuration* t, int i)
 {
 	if (t->valuation < s->valuation)
@@ -61,14 +84,42 @@ void BVNSAlgorithm::initthreshold(Configuration** population, int popsize)
 
 Configuration* BVNSAlgorithm::shake(Configuration* s,int i)
 {
+	previous->copy_element(s);
+//	problem->next_move(s,(*movements[i]),nbhsearch);	
 	return s;
 }
-Configuration* BVNSAlgorithm::firstImprovement(Configuration* s)
+Configuration* BVNSAlgorithm::firstImprovement(OpProblem problem,Configuration* s)
+{
+	walkalgo->randomwalk(problem,s);
+	return s;
+}*/
+
+/* --- ---- --- */
+
+/* --- NeighborStruc --- */
+
+Configuration* PFlip::shake(OpProblem* problem, Configuration* s)
+{
+	// pas fliper deux fois la meme variable
+	int i;
+	for (i=0; i < s->var_conflict_size && i < p; i++)
+	{
+		CSPMove* m = (CSPMove*)problem->create_move();
+		m->variable = s->var_conflict[i];//((CSProblem*)problem)->random_variable(s);
+		m->value = ((CSProblem*)problem)->random_value(m->variable,s->config[m->variable]);
+		s->update_conflicts(problem,m);
+	}
+	
+	// if i < p que faire ?
+	return s;
+}
+
+Configuration* PFlip::firstImprovement(OpProblem* problem, Configuration* s)
 {
 	return s;
 }
 
-/* --- ---- --- */
+/* --- ------------- --- */
 
 
 // les constructeurs et destructeurs

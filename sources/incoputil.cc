@@ -222,6 +222,7 @@ liste_methodes.push_back("gww-adaptkillworst");
 liste_methodes.push_back("gww-mediandist");
 liste_methodes.push_back("gww-bestdist");
 liste_methodes.push_back("gww-adapt");
+liste_methodes.push_back("vns");
 }
 
 void arguments_arret(char** argv, int& narg, int& stop)
@@ -524,6 +525,33 @@ GWWAlgorithm* algo_gww(char** argv, int& narg, string& method , int& taille, lis
 }
 
 
+
+void arguments_bvns(char** argv, int& narg, int& kmax, int& maxtime)
+{
+	kmax = argument2ul(argv[++narg], "kmax");
+	*ofile << " kmax " << kmax << endl;
+	maxtime = argument2ul(argv[++narg], "maxtime");
+	*ofile << " maxtime " << maxtime << endl;
+}
+
+
+BVNSAlgorithm* algo_vns(char** argv, int& narg, string& method , int& taille, list<string>& liste_methodes)
+{
+	// recuperer kmax et maxtime de argv
+	int kmax;
+	int maxTime;
+	arguments_bvns(argv,narg,kmax,maxTime);
+	
+	kmax = 4;
+	maxTime=3600;
+	BVNSAlgorithm* algo = new BVNSAlgorithm(kmax,maxTime);
+	definir_liste_methodes(liste_methodes);
+	arguments_gww_marche(argv,narg,method,liste_methodes);
+	algo->walkalgo = algo_marche(argv,narg,method,0);
+	algo->walkalgo->methodname=method;
+	return algo;
+}
+
 // lecture de l'argument method et appel selon l'argument de la création d'un des  2 principaux types d'algo (LS et GWW)
 IncompleteAlgorithm* algo_creation(char** argv, int& narg, int& taille, int& graine1, int & nbessais)
  { IncompleteAlgorithm* algo = new IncompleteAlgorithm();
@@ -536,7 +564,8 @@ IncompleteAlgorithm* algo_creation(char** argv, int& narg, int& taille, int& gra
     algo= algo_gww (argv,narg,method,taille,liste_methodes);	
   else {
 	  
-	  if (method=="bvns") {
+	  if (method=="vns") {
+		  //algo = algo_vns(argv,narg,method,taille,liste_methodes);
 		  printf("a implementer"); //TODO
 		  }
 	else{ algo = algo_marche (argv,narg,method,0);

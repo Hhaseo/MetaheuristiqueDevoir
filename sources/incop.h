@@ -1,4 +1,6 @@
 #include <ctime>
+#include <vector>
+
 /* Les définitions des classes de la partie algorithme + OpProblem */
 /** the definitions of classes of the algorithmic part + OpProblem */
 
@@ -8,7 +10,6 @@ class IncompleteAlgorithm;
 class Metaheuristic;
 class NeighborhoodSearch;
 class Move;
-
 
 /* la classe Configuration  le champ config comprend la configuration elle-même sous forme de tableau d'entiers
 le champ valuation contient sa valeur pour l'évaluation */
@@ -368,28 +369,61 @@ returns 1 if a move has been done and 0 if no move has been done */
 
 };
 
-/* ----------------------------- BVNS ----------------------------- */
-class BVNSAlgorithm : public IncompleteAlgorithm
+/* ------------------------- Struct Voisinage ---------------------- */
+
+class AbstractNeighborStructure
 {
 	public:
-		int k;
-		int maxTime;
-		time_t startTime;
-		time_t currTime;
-		BVNSAlgorithm(int k, int maxTime);
-		~BVNSAlgorithm(){};
-		/** walk for a particule */
-		void randomwalk (OpProblem* problem, Configuration* configuration);
-		void initthreshold(Configuration** population, int popsize);
-		/** Run the algorithm on a population (array of configurations) */
-		void run (OpProblem *problem,Configuration * initSolution);
-		int neighborhoodChange(Configuration* s, Configuration* t, int i);
-		Configuration* firstImprovement(Configuration* s);
-		Configuration* shake(Configuration* s,int i);
+		virtual Configuration* shake(OpProblem* problem, Configuration* s)=0;
+		virtual Configuration* firstImprovement(OpProblem* problem, Configuration* s)=0;
+	
+};
+
+class PFlip : public AbstractNeighborStructure
+{
+	public:
+		int p;
+		PFlip(int p) : p(p){};
+		Configuration* shake(OpProblem* problem, Configuration* s);
+		Configuration* firstImprovement(OpProblem* problem, Configuration* s);
 };
 
 /* ----------------------------------------------------------------- */
 
+/* ----------------------------- BVNS ----------------------------- */
+class BVNSAlgorithm : public IncompleteAlgorithm
+{
+	public:
+		int kmax;
+		int maxTime;
+		time_t startTime;
+		time_t currTime;
+		Configuration* previous;
+		LSAlgorithm* walkalgo;
+		vector<AbstractNeighborStructure*> movements;
+		
+		NeighborhoodSearch* nbhsearch;
+		BVNSAlgorithm(int k, int maxTime);
+		~BVNSAlgorithm()
+		{
+			delete previous;
+			while (!movements.empty())
+			{
+				movements.pop_back();
+			}
+
+		};
+		
+		void run (OpProblem *problem,Configuration * initSolution);
+		/** walk for a particule */
+		/*void randomwalk (OpProblem* problem, Configuration* configuration);
+		void initthreshold(Configuration** population, int popsize);
+		int neighborhoodChange(Configuration* s, Configuration* t, int i);
+		Configuration* firstImprovement(Configuration* s);
+		Configuration* shake(Configuration* s,int i);*/
+};
+
+/* ----------------------------------------------------------------- */
 
 class LSAlgorithmGWW: public LSAlgorithm
 {public :
