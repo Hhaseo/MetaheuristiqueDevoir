@@ -4,8 +4,9 @@
 #include <vector>
 #include <set>
 #include <string>
+#include <iostream>
 #include <algorithm>
-#include <fstream.h>
+#include <fstream>
 #include "incop.h"
 #include "incoputil.h"
 #include "csproblem.h"
@@ -14,47 +15,47 @@
 #include "move.h"
 #include "autotuning2.h"
 
-extern ofstream* ofile;  // le fichier de sortie
-extern Stat_GWW * Statistiques; 
+extern std::ofstream* ofile;  // le fichier de sortie
+extern Stat_GWW * Statistiques;
 
 void arguments_clique(char** argv, int& narg, int & clsize)
-{ 
+{
   clsize = argument2ul(argv[narg+1],"taille clique ");
-  *ofile << " maxclique  " << argv[narg+1] << "  taille clique " << clsize << endl;
+  *ofile << " maxclique  " << argv[narg+1] << "  taille clique " << clsize << std::endl;
   narg++;
 }
 
 
-/** Tout ce qui concerne le probleme max-clique : 
+/** Tout ce qui concerne le probleme max-clique :
 on essaie de trouver une clique de taille n donnée en minimisant les conflits (aretes manquantes
 dans l'ensemble des n sommets candidats
-Un mouvement est un échange entre un sommet dans la clique candidate participant à un conflit 
+Un mouvement est un échange entre un sommet dans la clique candidate participant à un conflit
 et un sommet hors clique (remainvariables)
-Utilisation de ExchangeMove défini  dans move  
+Utilisation de ExchangeMove défini  dans move
 */
 
 /* meme format de fichier DIMACS que pour le coloriage  */
-void lire_debut_fichier_clique(ifstream & file, int& nbvar, int& nbconst)
+void lire_debut_fichier_clique(std::ifstream & file, int& nbvar, int& nbconst)
 {lire_debut_fichier_coloriage (file,  nbvar,  nbconst);}
 
-void lire_fichier_clique (ifstream& file, vector<int>* connexions,int ** constraint1)
+void lire_fichier_clique (std::ifstream& file, std::vector<int>* connexions,int ** constraint1)
 {lire_fichier_coloriage (file,  connexions, constraint1);}
 
 
-CliqueProblem* clique_problem_creation (int clsize,ifstream & file)
+CliqueProblem* clique_problem_creation (int clsize,std::ifstream & file)
 {
 
   // Declaration des variables contenant les structures de données des problemes
   int **constraint1; // utilise dans tout csp binaire
   int nbvar; int nbconst;
   lire_debut_fichier_clique(file,nbvar,nbconst); // pour dimensionner les structures
-  
+
   constraint1 =  csp_constraintdatastructure(nbvar);
 
   int* dom = new int[nbvar];
-  vector<int>* tabdom = new vector<int> [nbvar] ; // les differents types de domaines 
+  std::vector<int>* tabdom = new std::vector<int> [nbvar] ; // les differents types de domaines
   // Initialisation des structures de données des problèmes
-  vector<int>* connex = new vector<int> [nbvar];
+  std::vector<int>* connex = new std::vector<int> [nbvar];
 
   lire_fichier_clique(file,connex,constraint1);
   CliqueProblem * problem = probleme_maxclique(nbvar,nbconst,clsize,constraint1);
@@ -70,7 +71,7 @@ BinaryCSProblem (nvar,nconst){domainsize=2;cliquesize=clsize;}
 
 CliqueProblem* probleme_maxclique(int nbvar,int nbconst,int clsize,int** constraint1)
 {CliqueProblem* p1 = new CliqueProblem(nbvar,nbconst,clsize);
-p1->constraints=constraint1; 
+p1->constraints=constraint1;
 return p1;
 }
 
@@ -85,14 +86,14 @@ int maxclique (int argc, char** argv, int tuningmode) {
 
   // le nom du fichier de sortie : pour les tests : version logiciel + concaténation des arguments
   char filename [1000];
-  if ((string)argv[1] == "arg")
+  if ((std::string)argv[1] == "arg")
     ofile_name(filename, argc, argv);
   else sprintf(filename,"%s",argv[1]);
 
-  ofstream ofile1 (filename);
-  ofile = & ofile1;
+  std::ofstream ofile1 (filename);
+    ofile = & ofile1;
 
-  ifstream file (argv[2]); // le fichier de données 
+  std::ifstream file (argv[2]); // le fichier de données
 
   // lecture des arguments du problème
   arguments_clique(argv,narg,clsize);
@@ -102,19 +103,19 @@ int maxclique (int argc, char** argv, int tuningmode) {
 
   // allocation de l'objet pour les stats
   Statistiques=new Stat_GWW (1, nbessais);
-  
+
   // argument pour la trace
   arguments_tracemode(argv,narg);
   // pour la récupération du signal 10
   sigaction();
-// argument de temps maximum 
+// argument de temps maximum
   double maxtime;
   if (tuningmode)  arguments_tempscpu (argv,narg,maxtime);
 
   // creation du probleme (lecture des données, création des structures de données et du problème)
   CliqueProblem* problem = clique_problem_creation (clsize,file);
 
-  // creation de la population et initialisation 
+  // creation de la population et initialisation
   // La population : tableau de configurations
   Configuration* population[taille];
   problem->init_population(population,taille);
@@ -123,23 +124,23 @@ int maxclique (int argc, char** argv, int tuningmode) {
   // initialisation des statistiques
   Statistiques->init_pb(0);
 
-  // boucle sur les essais 
+  // boucle sur les essais
   if (tuningmode)
     autosolving((LSAlgorithm*)algo,population,problem,0,graine1,nbessais,maxtime,1000);
   else
-    {  // boucle sur les essais 
-      
+    {  // boucle sur les essais
+
       for(int nessai = 0;nessai< nbessais ; nessai++)
 	executer_essai (problem,algo,population,taille,graine1,nessai);
-      
-      // ecriture statistiques 
-      Statistiques->current_try++; 
+
+      // ecriture statistiques
+      Statistiques->current_try++;
     }
   delete problem;
-  cout << "Fin résolution " << Statistiques->total_execution_time << endl;
+  std::cout << "Fin résolution " << Statistiques->total_execution_time << std::endl;
   return 0;
-  
-  
+
+
 }
 
 
@@ -172,7 +173,7 @@ int CliqueProblem::config_evaluation (Configuration* configuration)
      }
    }
 
- 
+
  return valeur;
 }
 
@@ -249,7 +250,7 @@ void CliqueProblem::next_move
 {int conflictvariable = 0; int index1;
   while(!conflictvariable)
     {index1 =  (int) (drand48() * cliquesize);
-    if (((FullincrCSPConfiguration*)configuration)->tabconflicts[clique(configuration)[index1]][1]) 
+    if (((FullincrCSPConfiguration*)configuration)->tabconflicts[clique(configuration)[index1]][1])
       conflictvariable=1;
     }
   ((ExchangeMove*)move)->variable1 = index1;
@@ -257,7 +258,7 @@ void CliqueProblem::next_move
     ((ExchangeMove*)move)->variable2 = minconflict_invariable(configuration);
   else
     ((ExchangeMove*)move)->variable2 = (int) (drand48 () * (nbvar - cliquesize));
-  
+
   move->valuation = move_evaluation (configuration,move);
 }
 
@@ -315,12 +316,12 @@ void CliqueProblem::random_configuration(Configuration* configuration)
   //    *ofile << clique(configuration)[j] << " " ;
   //  *ofile << endl;
 }
-  
+
 void CliqueProblem::solution_write()
-{ *ofile<< " meilleure clique" << endl;
+{ *ofile<< " meilleure clique" << std::endl;
 for (int j=0; j< cliquesize; j++)
     *ofile << ((CliqueConfiguration*)best_config)->clique[j] << " " ;
-  *ofile << endl;
+  *ofile << std::endl;
 }
 
 void CliqueProblem::adjust_parameters (Configuration* configuration, int& maxneighbors, int& minneighbors)

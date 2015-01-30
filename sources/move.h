@@ -1,4 +1,4 @@
-#include <incop.h>
+#include "incop.h"
 
 /* Echange des valeurs de deux variables */
 /** Exchange the values of two variables */
@@ -31,8 +31,8 @@ class FlipMove : public Move
 public :
 	int k;
 	OpProblem* problem;
-	FlipMove(int k, OpProblem* problem);	
-    ~FlipMove() {;};   
+	FlipMove(int k, OpProblem* problem);
+    ~FlipMove() {;};
 	int eqmove(Move* move);
 	void copymove (Move* move);
 	Move* computetabumove(Configuration* config);

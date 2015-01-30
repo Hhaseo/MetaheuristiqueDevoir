@@ -15,7 +15,7 @@ class ColorCSProblem : public BinaryCSProblem
   void random_configuration(Configuration* configuration);
   Configuration* create_configuration();
   int compute_conflict (Configuration* configuration,int var, int val);
-  void compute_var_conflict(Configuration* configuration); 
+  void compute_var_conflict(Configuration* configuration);
   int move_evaluation (Configuration* configuration,Move* move);
 
   int min_conflict_value(int var, int val, Configuration * configuration);
@@ -23,12 +23,13 @@ class ColorCSProblem : public BinaryCSProblem
 //  void  adjust_parameters (Configuration* configuration, int& maxneighbors, int& minneighbors);
 };
 
-
+// Add Missing prototype.
+void arguments_coloriage(char** argv, int& narg, int & nbcol);
 
 
 
 /* Coloriage avec l'algorithme Impasse :  les variables affectées respectent les contraintes ,
-une n+1 ème couleur fictive est affectée aux variables qu'on n'a pu affecter sans conflit 
+une n+1 ème couleur fictive est affectée aux variables qu'on n'a pu affecter sans conflit
 avec une des n couleurs */
 /** Coloring with Impasse algorithm : the assigned variables respect the constraints,
 an n+1 th virtual color is assigned to variables which cannot be assigned without conflicts with the
@@ -49,7 +50,7 @@ of variables that cannot be assigned */
   void move_execution(Configuration* configuration, Move* move);
   //  int random_variable(Configuration* configuration);
   void random_configuration(Configuration* configuration);
-  void compute_var_conflict(Configuration* configuration);	
+  void compute_var_conflict(Configuration* configuration);
   void init_domains(int nbvar, int s );
   void init_tabdomains(int s);
   void best_config_analysis();
@@ -60,9 +61,9 @@ of variables that cannot be assigned */
 ColorCSProblem* probleme_coloriage(int nbvar,int nbconst,int s,int** constraint1);
 ImpasseColor* coloriage_impasse(int nbvar,int nbconst,int s,int degree, int** constraint1);
 
-ColorCSProblem* color_problem_creation (int nbcol,ifstream & file);
-ImpasseColor* impasse_problem_creation (int nbcol,int degre,ifstream & file);
+ColorCSProblem* color_problem_creation (int nbcol,std::ifstream & file);
+ImpasseColor* impasse_problem_creation (int nbcol,int degre,std::ifstream & file);
 
-void lire_debut_fichier_coloriage(ifstream & file, int& nbvar, int& nbconst);
-void lire_fichier_coloriage (ifstream& file, vector<int>* connexions,int ** constraint1);
+void lire_debut_fichier_coloriage(std::ifstream & file, int& nbvar, int& nbconst);
+void lire_fichier_coloriage (std::ifstream& file, std::vector<int>* connexions,int ** constraint1);
 int colorcsp (int argc, char** argv, int tuningmode) ;

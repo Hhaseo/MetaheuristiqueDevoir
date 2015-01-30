@@ -3,9 +3,9 @@
 #include <list>
 #include <vector>
 #include <set>
-
+#include <iostream>
 using namespace std;
-#include <fstream.h>
+#include <fstream>
 #include <string>
 
 #include "incop.h"

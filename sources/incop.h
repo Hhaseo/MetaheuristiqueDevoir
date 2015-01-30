@@ -1,5 +1,7 @@
 #include <ctime>
 #include <vector>
+#include <set>
+#include <string>
 
 /* Les définitions des classes de la partie algorithme + OpProblem */
 /** the definitions of classes of the algorithmic part + OpProblem */
@@ -11,12 +13,15 @@ class Metaheuristic;
 class NeighborhoodSearch;
 class Move;
 
+#ifndef __INCOP_H__
+# define __INCOP_H__
+
 /* la classe Configuration  le champ config comprend la configuration elle-même sous forme de tableau d'entiers
 le champ valuation contient sa valeur pour l'évaluation */
 
 /** the main class Configuration */
 
-class Configuration 
+class Configuration
 
 {public :
   int nbvar;
@@ -30,8 +35,8 @@ class Configuration
   int var_conflict_size;
 /* les variables participant à un conflit : implanté sous forme de vecteur */
 /** the variables taking part to a conflict : implemented with a vector */
-   vector<int> var_conflict;	
-   set<int> set_var_conflict;
+   std::vector<int> var_conflict;
+   std::set<int> set_var_conflict;
 /* indicateur si la configuration a été regroupée (pour GWW) */
 /** indicates if the configuration has been regrouped before (for GWW) */
   int regrouped;
@@ -74,12 +79,12 @@ class CSPConfiguration: public Configuration
  CSPConfiguration(int nbvar, int domsize);
 };
 
-/* L'incrémentalité avec stockage de la participation à l'évaluation des valeurs courantes des 
+/* L'incrémentalité avec stockage de la participation à l'évaluation des valeurs courantes des
 variables de la configuration : implanté dans tabconflicts (tableau  à une dimension) */
 /** Incremental evaluation with storage in the conflict datastructure
 tabconflicts the participation of the current values of the configuration */
 class IncrCSPConfiguration : public CSPConfiguration
-{ public : 
+{ public :
   int* tabconflicts;
   IncrCSPConfiguration (int nbvar);
   IncrCSPConfiguration(int nbvar, int nbcol);
@@ -91,7 +96,7 @@ class IncrCSPConfiguration : public CSPConfiguration
   int get_conflicts (int var, int val , int index);
   int get_conflicts_problem (OpProblem* problem, int var, int val);
   virtual  void set_variableconflicts (int var, int nbconf);
-  void update_conflicts(OpProblem* problem, Move* move);		
+  void update_conflicts(OpProblem* problem, Move* move);
 };
 
 /* l'incrémentalité totale : participation à l'évaluation de chaque
@@ -119,7 +124,7 @@ class FullincrCSPConfiguration : public CSPConfiguration
 
 /* classe Move */
 /** root class Move */
-class Move 
+class Move
 {public :
  int valuation;
  Move();
@@ -154,14 +159,14 @@ class CSPMove : public Move
 /* classe racine des problèmes d'optimisation (minimisation) */
 /** Root class of Optimization Problems (minimization) */
 
-class OpProblem 
+class OpProblem
 {public :
 /* la meilleure configuration trouvée */
 /** the best configuration found */
   Configuration* best_config;
 /* nombre de variables */
 /** the number of variables */
-  int nbvar;  
+  int nbvar;
 /* taille maximum des domaines */
 /** maximum domain size */
   int domainsize;
@@ -200,7 +205,7 @@ is implemented in subclasses */
   virtual void adjust_parameters(Configuration* configuration, int & maxneighbors, int & minneighbors){};
 /* prochain mouvement du voisinage à tester */
 /** next move to be tested (implemented in subclasses)*/
-  virtual void next_move(Configuration* configuration, Move* move, NeighborhoodSearch* nbhs){};	
+  virtual void next_move(Configuration* configuration, Move* move, NeighborhoodSearch* nbhs){};
 /* affectation aléatoire des variables d'une configuration */
 /** random assignment of the variables of a configuration */
   virtual void random_configuration(Configuration* configuration){};
@@ -242,8 +247,8 @@ is implemented in subclasses */
   virtual int tabuinverseindex(Move* move, Configuration* configuration){return 0;};
   virtual int nbtabuindex(){return 0;};
 };
-  
-/* Le voisinage paramétré d'une part par  min voisins explorés, 
+
+/* Le voisinage paramétré d'une part par  min voisins explorés,
 max voisins explorés et épuisement voisinage et d'autre part par var_conflict et val_conflict */
 /** Class NeighborhoodSearch : how the neighborhood is explored */
 
@@ -309,7 +314,7 @@ la classe mere : algo de recherche incomplet */
 
 class IncompleteAlgorithm
 {public :
-  string methodname;
+  std::string methodname;
 /* un seuil peut être utilisé pour empêcher des mouvements de coût supérieur au seuil
 (utilisé dans les recherches locales des marches de GWW)*/
 /** a threshold can be used to forbid moves above this threshold (used in LSAlgorithms implementing walks inside GWW)*/
@@ -327,7 +332,7 @@ class IncompleteAlgorithm
 
 /* la classe des algos de marche aléatoire paramétrée par longueur marche
 un voisinage et une metaheuristique */
-/** The class of local search algorithm on one particle : the random walk is 
+/** The class of local search algorithm on one particle : the random walk is
 parameterized with the walk lengh,a neighborhood and a metaheuristics */
 
 class LSAlgorithm: public IncompleteAlgorithm
@@ -337,7 +342,7 @@ class LSAlgorithm: public IncompleteAlgorithm
   int walklength;
 /* le voisinage */
 /** the way the neighborhood is explored */
-  NeighborhoodSearch * nbhsearch;  
+  NeighborhoodSearch * nbhsearch;
 /* la métaheuristique */
 /** the metaheuristics used */
   Metaheuristic* mheur;
@@ -376,7 +381,7 @@ class AbstractNeighborStructure
 	public:
 		virtual Configuration* shake(OpProblem* problem, Configuration* s)=0;
 		virtual Configuration* firstImprovement(OpProblem* problem, Configuration* s)=0;
-	
+
 };
 
 class PFlip : public AbstractNeighborStructure
@@ -400,8 +405,8 @@ class BVNSAlgorithm : public IncompleteAlgorithm
 		time_t currTime;
 		Configuration* previous;
 		LSAlgorithm* walkalgo;
-		vector<AbstractNeighborStructure*> movements;
-		
+		std::vector<AbstractNeighborStructure*> movements;
+
 		NeighborhoodSearch* nbhsearch;
 		BVNSAlgorithm(int k, int maxTime);
 		~BVNSAlgorithm()
@@ -413,7 +418,7 @@ class BVNSAlgorithm : public IncompleteAlgorithm
 			}
 
 		};
-		
+
 		void run (OpProblem *problem,Configuration * initSolution);
 		/** walk for a particule */
 		/*void randomwalk (OpProblem* problem, Configuration* configuration);
@@ -448,7 +453,7 @@ class Metaheuristic
   virtual void adjustparameter (int parameter) {;};
 };
 
-/* marche avec liste taboue : parametree par longueur de la liste : cette liste de mouvements est 
+/* marche avec liste taboue : parametree par longueur de la liste : cette liste de mouvements est
 implantee à l'aide d'une liste de Move* */
 /** Walk with using a tabu list : this list of moves is implemented by a list<Move*> structure , the
 actual class of the moves depend on the problems */
@@ -459,7 +464,7 @@ class TabuSearch: public Metaheuristic
   int tabulength;
 /* liste taboue : traitée comme une file */
 /** tabu list : implemented FIFO */
-  list<Move*> move_list;
+  std::list<Move*> move_list;
   TabuSearch(int tabul);
 /* acceptation d'un mouvement : non tabou  (le critère d'aspiration est dans l'algo de recherche du voisin) */
 /** acceptance of a move : not in the tabulist (the aspiration criterion of a best is in the configurationmove algorithm) */
@@ -486,7 +491,7 @@ class IncrTabuSearch: public TabuSearch
 {public :
   IncrTabuSearch(int tabul);
   int nbiter;
-  vector<int> tabutime;
+  std::vector<int> tabutime;
   OpProblem* currentproblem;
   int  acceptance (Move* move, Configuration* config);
   void executebeforemove(Move* move, Configuration* configuration, OpProblem* problem);
@@ -512,7 +517,7 @@ l'évaluation : probabilité p = exp (-evaluationdelta/temperature) */
   void adjustparameter(int parameter);
 };
 
-/* l'acceptation à seuil : un mouvement ne doit pas détériorer l'évaluation plus que le seuil courant ; 
+/* l'acceptation à seuil : un mouvement ne doit pas détériorer l'évaluation plus que le seuil courant ;
 le seuil diminue linéairement de thresholdinit à 0*/
 
 /** Threshold accepting Metaheuristics : a move must no deteriorate the evaluation more than the
@@ -528,9 +533,9 @@ class ThresholdAccepting: public Metaheuristic
 /* valeur courante du seuil */
 /** current value of the threshold */
   double thresholdaccept; // le seuil tel que géré par TA
-/* constructeur : 2 arguments seuil initial maxthreshold et nombre de pas, 
+/* constructeur : 2 arguments seuil initial maxthreshold et nombre de pas,
 le pas constant delta de baisse du seuil est calculé*/
-/** constructor : two arguments : maxthreshold the initial threshold and 
+/** constructor : two arguments : maxthreshold the initial threshold and
 walklength , it computes a constant step for lowering the threshold */
   ThresholdAccepting(double maxthreshold, int walklength);
 /* condition d'acceptation : être sous ou au niveau du  seuil */
@@ -552,17 +557,17 @@ class SimulatedAnnealing: public Metaheuristic
 /** initial temperature */
   double inittemperature;
 /* pas constant de baisse de temperature */
-/** constant step for lowering the temperature */ 
+/** constant step for lowering the temperature */
   double delta;
 /* temperature courante */
 /** current temperature */
-  double temperature; 
-  int walklength; 
+  double temperature;
+  int walklength;
 /* Constructeur : 2 arguments : température initiale et longueur de marche */
 /** Constructor : 2 parameters  : initial temperature and walk length : the fixed
 temperature decrement is computed. */
   SimulatedAnnealing(double initialtemperature, int walklength);
-/* acceptation en fonction de la temperature : formule classique du recuit simulé 
+/* acceptation en fonction de la temperature : formule classique du recuit simulé
 probablité d'acceptation d'un mouvement détériorant l'évaluation :
 probabilité =  exp (-evaluationdelta/temperature) */
 
@@ -581,16 +586,16 @@ for accepting a bad move :  probability =  exp (-temperature/evaluationdelta) */
 /** Special Tabu search with complementary acceptance condition depending on the move direction */
 
 
-//                          liste taboue 
+//                          liste taboue
 
 class TabuAcceptingrate: public TabuSearch
 {public :
    /* probabilité d'acceptation d'un mauvais   */
   /** probability of acceptance of a worsening move */
-  float Pd;       
+  float Pd;
   /* probabilité d'acceptatiion d'un mouvement de même coût que le courant */
   /** probability of acceptance of a move with same cost */
-  float P0;        
+  float P0;
   TabuAcceptingrate(int tabul, float Pd, float P0);
 /* critère d'acceptation : non tabou et pourcentages d'acceptation suivant sens du mouvement (détériorant, neutre, améliorant) */
 /** Acceptance condition : non tabu and probabilities depending on the move direction */
@@ -617,11 +622,11 @@ class GreedySearch: public Metaheuristic
 //-------------------------------------------------------------------------------------------------
 
 
-/* les algos de type GWW 
+/* les algos de type GWW
  les différentes sous classes diffèrent par la gestion du seuil
 et les regroupements de particules */
 
-/** the GWW (Go with the winners) algorithms : the different subclasses 
+/** the GWW (Go with the winners) algorithms : the different subclasses
 differ by the way a threshold is managed and the particles are regrouped */
 
 class GWWAlgorithm: public IncompleteAlgorithm
@@ -629,20 +634,20 @@ class GWWAlgorithm: public IncompleteAlgorithm
 /* nombre de particules */
 /** number of particles */
   int populationsize;
-/* indicateur de marche uniquement si la particule a été regroupée 
+/* indicateur de marche uniquement si la particule a été regroupée
 (utile pour GWW de base, sans recherche locale, uniquement) (1 oui, 0 non) */
 /** walk indicator : a walk is performed only is the particle has been regrouped : (1 yes, 0 no)
 (useful for a standard GWW with random walk (and no local search)) */
   int regrouptest;
 /* indicateur de baisse du seuil au dernier mouvement de la marche (pour essayer d'empecher la particule d' etre redistribuée) (1 oui, 0 non) */
-/** parameter if the threshold is lowered at the last move of the walk 
+/** parameter if the threshold is lowered at the last move of the walk
 (for trying to avoid the particle to be redistributed  (1 yes, 0 no)*/
   int lastmovedescent;
 /* indicateur d'élitisme : remet-on le meilleur individu dans la population à chaque regroupement (1 oui, 0 non) */
 /** elitism parameter : is the best particle put again in the population at each regroupment ( 1 yes, 0 no) */
   int elitism;
 /* indicateur d'arrêt de la marche en cas de stagnation (1 oui, 0 non) */
-/** parameter for stopping the walk in case of stagnation (1 yes, 0 no) */ 
+/** parameter for stopping the walk in case of stagnation (1 yes, 0 no) */
   int nomovestop;
 /* le décrément du seuil (calculé par thresholdcomputedelta) */
 /** the threshold decrement (compted by thresholdcomputedelta) */
@@ -716,7 +721,7 @@ class StandardGWWAlgorithm : public ThresholdGWWAlgorithm
   double thresholddescent;
 /* seuil minimum (correspond en général à une borne inférieure connue) */
 /** minimum of the threshold (corresponds generally to a known lowerbound) */
-  int thresholdmin;  
+  int thresholdmin;
   void regrouping(Configuration** population);
   StandardGWWAlgorithm(int population_size, int grtest,int lastmove, int elitisme,int stop, double thresdescent,int threshmin );
   void thresholdcomputedelta(Configuration** population);
@@ -727,7 +732,7 @@ class StandardGWWAlgorithm : public ThresholdGWWAlgorithm
 class FastStandardGWWAlgorithm: public StandardGWWAlgorithm
 {public :
    void thresholdcomputedelta(Configuration** population);
-   FastStandardGWWAlgorithm(int population_size, int grtest,int lastmove, int elitisme, int stop, double thresdescent,int threshmin );	
+   FastStandardGWWAlgorithm(int population_size, int grtest,int lastmove, int elitisme, int stop, double thresdescent,int threshmin );
 };
 
 /* GWW avec descente su seuil en tuant un nombre donné de particules à chaque fois */
@@ -783,7 +788,7 @@ class BestAdaptGWWAlgorithm: public AdaptiveGWWAlgorithm
 
 /* GWW sans seuil : 2 paramètres : nombre de tués à chaque itération, nombre d'itérations */
 /** GWW without threshold management : 2 parameters : number of particles redistributed at each iteration , number of iterations */
-class NothresholdGWWAlgorithm : public GWWAlgorithm 
+class NothresholdGWWAlgorithm : public GWWAlgorithm
 {public :
   NothresholdGWWAlgorithm(int population_size, int grtest, int lastmove, int elitisme, int stop,
 	int killed,  int nbiter);
@@ -794,5 +799,5 @@ class NothresholdGWWAlgorithm : public GWWAlgorithm
 };
 
 
-
+#endif
 

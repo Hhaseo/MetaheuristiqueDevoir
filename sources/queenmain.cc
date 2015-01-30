@@ -3,9 +3,9 @@
 #include <list>
 #include <vector>
 #include <set>
-
+#include <iostream>
 using namespace std;
-#include <fstream.h>
+#include <fstream>
 #include <string>
 
 #include "incop.h"
@@ -25,7 +25,7 @@ extern Stat_GWW * Statistiques; // trombe_ajout: l'objet pour les stats en var g
                          // alloué dans le main() avec npb et nbessai
 
 void arguments_reines(char** argv, int& narg, int & s)
-{ 
+{
   s = argument2ul(argv[narg+1],"nombre de reines ");
   *ofile << " reines  " << argv[2] << "  nb reines " << s << endl;
   narg++;
@@ -58,7 +58,7 @@ int main (int argc, char** argv) {
 
   // allocation de l'objet pour les stats
   Statistiques=new Stat_GWW (1, nbessais);
-  
+
   // argument pour la trace
   arguments_tracemode(argv,narg);
   // pour la récupération du signal 10
@@ -67,7 +67,7 @@ int main (int argc, char** argv) {
   // creation du probleme (lecture des données, création des structures de données et du problème)
   SwNiNqueen* problem = swniqueen_problem_creation (nbvar);
 
-  // creation de la population et initialisation 
+  // creation de la population et initialisation
   // La population : tableau de configurations
   Configuration* population[taille];
   problem->init_population(population,taille);
@@ -76,19 +76,19 @@ int main (int argc, char** argv) {
   // initialisation des statistiques
   Statistiques->init_pb(0);
 
-  // boucle sur les essais 
+  // boucle sur les essais
 
   for(int nessai = 0;nessai< nbessais ; nessai++)
     executer_essai (problem,algo,population,taille,graine1,nessai);
 
-  // ecriture statistiques 
-  Statistiques->current_try++; 
+  // ecriture statistiques
+  Statistiques->current_try++;
   ecriture_stat_probleme();
   delete problem;
   cout << "Fin résolution " << Statistiques->total_execution_time << endl;
   return 0;
-  
-  
+
+
 }
 
 

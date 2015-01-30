@@ -1,18 +1,18 @@
-/* probleme maxclique : on recherche une clique d'une taille donnée dans un graphe : 
+/* probleme maxclique : on recherche une clique d'une taille donnée dans un graphe :
 en augmentant la taille de la clique recherchée, on résout le problème maxclique ; les graphes sont donnés
 dans le format Dimacs  */
 /** Clique Problem : one searches for a clique of given size in a graph  : by increasing the clique size, one solves
 the classical Maximum clique problem  : the graphs are given in standard Dimacs format*/
 
-/* classe pour la recherche d'une clique de taille cliquesize 
+/* classe pour la recherche d'une clique de taille cliquesize
 on essaie de trouver une clique de taille n donnée en minimisant les conflits (aretes manquantes
 dans l'ensemble des n sommets candidats
-Un mouvement est un échange entre un sommet dans la clique candidate participant à un conflit 
+Un mouvement est un échange entre un sommet dans la clique candidate participant à un conflit
 et un sommet hors clique (remainvariables)
 Utilisation de ExchangeMove défini  dans move.cc  */
 
 /** CliqueProblem class : searching for a clique of size cliquesize  : one minimizes the conflicts (number of missing edges
-for variables in clique array) ; the remaining variables are in remainvariables array. The neighborhood is to exchange 
+for variables in clique array) ; the remaining variables are in remainvariables array. The neighborhood is to exchange
 2 variables between the 2 arrays (class ExchangeMove defined in move.h) */
 
 class CliqueProblem : public BinaryCSProblem
@@ -46,12 +46,12 @@ void adjust_parameters (Configuration* configuration, int& maxneighbors, int& mi
 };
 
 CliqueProblem* probleme_maxclique(int nbvar,int nbconst,int clsize,int** constraint1);
-CliqueProblem* clique_problem_creation (int clsize,ifstream & file);
-void lire_debut_fichier_clique(ifstream & file, int& nbvar, int& nbconst);
-void lire_fichier_clique (ifstream& file, vector<int>* connexions,int ** constraint1);
+CliqueProblem* clique_problem_creation (int clsize,std::ifstream & file);
+void lire_debut_fichier_clique(std::ifstream & file, int& nbvar, int& nbconst);
+void lire_fichier_clique (std::ifstream& file, std::vector<int>* connexions,int ** constraint1);
 
 /* configuration pour les cliques (on utilise une structure de données pour les conflits)
-a ete implanté comme sous-classe de FullincrCSPConfiguration 
+a ete implanté comme sous-classe de FullincrCSPConfiguration
 (aurait aussi pu etre sous-classe de IncrCSPConfiguration : 1 seule valeur de conflits stockée par variable :
 le nombre d'aretes manquantes avec les variables de la clique
 champs spécifiques : les tableaux des variables dans et hors clique

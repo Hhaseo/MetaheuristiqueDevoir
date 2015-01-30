@@ -6,7 +6,7 @@
 #include <set>
 #include <string>
 #include <algorithm>
-#include <fstream.h>
+#include <fstream>
 #include "timer.h"
 #include "incop.h"
 #include "incoputil.h"
@@ -14,7 +14,7 @@
 #include "color.h"
 #include "maxclique.h"
 #include "autotuning2.h"
-   
+
 
 
 #include <math.h>

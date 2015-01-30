@@ -24,7 +24,7 @@ void incr_update_conflicts (IncrCSPConfiguration* configuration, Move* move);
 // int move_evaluation  (Configuration* configuration,Move* move);
 /* choix du mode d'incrémentalité : IncrCSPConfiguration ou FullincrCSPConfiguration */
 /** choice of incrementality mode : IncrCSPConfiguration ou FullincrCSPConfiguration */
-Configuration* NaryCSProblem::create_configuration();
+Configuration* create_configuration();
 };
 
 /* Contrainte N-aire en extension avec poids sur les n-uplets qui violent la contrainte */
@@ -58,12 +58,12 @@ class NaryVariable
   NaryVariable();
 };
 
-NaryCSProblem* weighted_narycsp_creation (int nbvar, int nbconst, int maxdomsize, 
+NaryCSProblem* weighted_narycsp_creation (int nbvar, int nbconst, int maxdomsize,
  vector<NaryVariable*>* vv,vector<NaryConstraint*>* vct     );
 
 void wcspdomaines_file_read (ifstream & file, int nbvar, vector<int>* tabdomaines);
 
-void  wcspdata_constraint_read (ifstream & file, int nbconst, vector<NaryVariable*>* vv, vector<NaryConstraint*>* vct, 
+void  wcspdata_constraint_read (ifstream & file, int nbconst, vector<NaryVariable*>* vv, vector<NaryConstraint*>* vct,
 				vector <int>* connexions, vector<int> * tabdomaines);
 
 

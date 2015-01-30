@@ -1,7 +1,7 @@
 /* L'implantation semi-incrementale (IncrCSPConfiguration), avec les méthodes spécifiques pour cette implantation */
 
 
-
+#include <cstdlib>
 #include <list>
 #include <vector>
 #include <string>
@@ -64,7 +64,7 @@ configuration->init_conflicts();
          configuration->incr_conflicts(i,configuration->config[i],0,valconst[constraints[i][j]]);
          configuration->incr_conflicts(j,configuration->config[j],0, valconst[constraints[i][j]]);
 	 }
-       }				      
+       }
    }
  return valeur;
 }

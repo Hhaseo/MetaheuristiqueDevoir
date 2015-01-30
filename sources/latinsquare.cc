@@ -5,9 +5,10 @@
 #include <vector>
 #include <string>
 #include <set>
+#include <iostream>
 #include <algorithm>
 using namespace std;
-#include <fstream.h>
+#include <fstream>
 #include "incop.h"
 #include "incoputil.h"
 #include "csproblem.h"
@@ -19,11 +20,11 @@ using namespace std;
 extern ofstream* ofile;  // le fichier de sortie
 
 
-extern Stat_GWW * Statistiques; // trombe_ajout: l'objet pour les stats en var globale 
+extern Stat_GWW * Statistiques; // trombe_ajout: l'objet pour les stats en var globale
                          // alloué dans le main() avec npb et nbessai
 
 void arguments_carre(char** argv, int& narg, int & s)
-{ 
+{
   s = argument2ul(argv[narg+1],"nombre de lignes ");
   *ofile <<  "  nb lignes " << s << endl;
   narg++;
@@ -33,8 +34,8 @@ void arguments_carre(char** argv, int& narg, int & s)
 Latinsquare* latinsquare_problem_creation (int nbvar)
 {
   int* dom = new int[nbvar*nbvar];
-  
-  vector<int>* tabdom = new vector<int> [nbvar*nbvar] ; // les differents types de domaines 
+
+  vector<int>* tabdom = new vector<int> [nbvar*nbvar] ; // les differents types de domaines
   // Initialisation des structures de données des problèmes
   vector<int>* connex = new vector<int> [nbvar*nbvar];
 
@@ -74,15 +75,15 @@ int latinsquare (int argc, char** argv, int tuningmode, int sb) {
 
   // allocation de l'objet pour les stats
   Statistiques=new Stat_GWW (1, nbessais);
-  
+
   // argument pour la trace
   arguments_tracemode(argv,narg);
   // pour la récupération du signal 10
   sigaction();
-// argument de temps maximum 
+// argument de temps maximum
   double maxtime;
   if (tuningmode)  arguments_tempscpu (argv,narg,maxtime);
-  
+
   Latinsquare* problem;
   // creation du probleme (lecture des données, création des structures de données et du problème)
   if (sb) // probleme carré latin  équilibré
@@ -90,7 +91,7 @@ int latinsquare (int argc, char** argv, int tuningmode, int sb) {
   else  // probleme carré latin de base
     problem = latinsquare_problem_creation (nbvar);
 
-  // creation de la population et initialisation 
+  // creation de la population et initialisation
   // La population : tableau de configurations
   Configuration* population[taille];
   problem->init_population(population,taille);
@@ -109,15 +110,15 @@ int latinsquare (int argc, char** argv, int tuningmode, int sb) {
   else
     {  for(int nessai = 0;nessai< nbessais ; nessai++)
       executer_essai (problem,algo,population,taille,graine1,nessai);
-    
-    // ecriture statistiques 
-    Statistiques->current_try++; 
+
+    // ecriture statistiques
+    Statistiques->current_try++;
     ecriture_stat_probleme();
     }
   delete problem;
   cout << "Fin résolution " << Statistiques->total_execution_time << endl;
   return 0;
-  
+
 }
 
 
@@ -152,12 +153,12 @@ int Latinsquare::config_evaluation (Configuration* configuration)
  for (int i=0; i< squaresize; i++)
    {for (int j=0; j< squaresize; j++)
      if (configuration->get_conflicts(i,j,j)> 1)
-       valeur+= 
+       valeur+=
 	 configuration->get_conflicts(i,j,j) -1;
    }
  return valeur;
 }
-			 
+
 
 
 // une permutation par ligne
@@ -171,7 +172,7 @@ void Latinsquare :: random_configuration(Configuration* configuration)
       {int indice = (int) (drand48() * (squaresize -j));
       int jj =0; int val;
       for (list<int>::iterator it = not_used.begin(); it != not_used.end(); it++)
-	{if (jj == indice) 
+	{if (jj == indice)
 	  {val=*it; break;}
 	jj++;}
       not_used.remove(val);
@@ -191,7 +192,7 @@ void Latinsquare::adjust_parameters(Configuration* configuration, int& maxneighb
 
 void Latinsquare::next_move
 (Configuration* configuration, Move* move, NeighborhoodSearch* nbhs)
-{ 
+{
 
   //  int line1 = rand () % squaresize;
   int line1= (((ColSwMove*)move)->line +1 ) % squaresize;  //  ligne a tour de role
@@ -204,27 +205,27 @@ void Latinsquare::next_move
      int conf =0; int var=variable1;
     while (variable1 < squaresize)
       {if (
-	   ((FullincrCSPConfiguration*)configuration)->tabconflicts[variable1][configuration->config[line1*squaresize+variable1]] > 1) 
+	   ((FullincrCSPConfiguration*)configuration)->tabconflicts[variable1][configuration->config[line1*squaresize+variable1]] > 1)
 	{conf=1;break;}
       variable1++;}
     if (!conf)
       {
         variable1=0;
-      while (variable1 < var) 
+      while (variable1 < var)
 	{if (((FullincrCSPConfiguration*)configuration)->tabconflicts[variable1][configuration->config[line1*squaresize+variable1]] > 1) {conf=1;break;}
 	variable1++;}
       }
     }
 
   int variable2 = rand () % (squaresize-1);
-  if (variable2 >= variable1) 
+  if (variable2 >= variable1)
      variable2++;
-  ((ColSwMove*)move)->line= line1; 
+  ((ColSwMove*)move)->line= line1;
   ((ColSwMove*)move)->variable1= variable1;
   ((ColSwMove*)move)->variable2= variable2;
   //  cout << "line " << line1 << " variable1 " << variable1 << " variable2 " << variable2 << endl;
  move->valuation = move_evaluation (configuration,move);
- 
+
 }
 
 int Latinsquare::move_evaluation (Configuration* configuration,Move* move)
@@ -245,7 +246,7 @@ int Latinsquare::move_evaluation (Configuration* configuration,Move* move)
     delta++;
   return (configuration->valuation + delta);
 }
-			 
+
 
 void Latinsquare::fullincr_update_conflicts (FullincrCSPConfiguration* configuration,Move* move)
 {
@@ -268,7 +269,7 @@ void Latinsquare::fullincr_update_conflicts (FullincrCSPConfiguration* configura
 
 
 void Latinsquare::move_execution(Configuration* configuration,Move* move)
-{OpProblem::move_execution(configuration,move); 
+{OpProblem::move_execution(configuration,move);
 int line = ((ColSwMove*)move)->line;
   int variable1 = squaresize*line + ((ColSwMove*)move)-> variable1;
   int variable2 = squaresize*line + ((ColSwMove*)move)-> variable2;
@@ -288,10 +289,10 @@ void Latinsquare::compute_var_conflict(Configuration* configuration)
 
 int ColSwMove::eqmove (Move* move1)
 {
-  return ( 
+  return (
 	  ((ColSwMove *)move1)->line== line
 	  &&    ((ColSwMove *)move1)->variable1== variable1
-	   &&  ((ColSwMove*)move1)->variable2 == variable2 
+	   &&  ((ColSwMove*)move1)->variable2 == variable2
 	  );
 }
 

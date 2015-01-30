@@ -1,13 +1,13 @@
 
 
-
+#include <iostream>
 #include <cerrno>
 #include <stdio.h>
 #include <list>
 #include <vector>
 #include <string>
 #include <algorithm>
-#include <fstream.h>
+#include <fstream>
 #include "timer.h"
 #include "incop.h"
 #include "incoputil.h"
@@ -21,7 +21,7 @@
 #include <stdlib.h>  // trombe_ajout
 #include <signal.h>  // trombe_ajout
 
-extern ofstream* ofile;  // le fichier de sortie
+extern std::ofstream* ofile;  // le fichier de sortie
 
 extern Stat_GWW * Statistiques; // trombe_ajout: l'objet pour les stats en var globale pour les signaux
                          // alloué dans le main() avec npb et nbessai
@@ -34,7 +34,7 @@ extern Stat_GWW * Statistiques; // trombe_ajout: l'objet pour les stats en var g
 
 void arguments_impasse(char** argv, int& narg, int & degre)
 { degre = argument2bul(argv[narg+1]," indicateur somme degrés ",0,1 );
-  *ofile << " somme degrés " << degre << endl;
+  *ofile << " somme degrés " << degre << std::endl;
   narg= narg+1;
  }
 
@@ -48,14 +48,14 @@ int main (int argc, char** argv) {
 
   // le nom du fichier de sortie : pour les tests : version logiciel + concaténation des arguments
   char filename [1000];
-  if ((string)argv[1] == "arg")
+  if ((std::string)argv[1] == "arg")
     ofile_name(filename, argc, argv);
   else sprintf(filename,"%s",argv[1]);
 
-  ofstream ofile1 (filename);
+  std::ofstream ofile1 (filename);
   ofile = & ofile1;
 
-  ifstream file (argv[1]); // le fichier de données 
+  std::ifstream file (argv[1]); // le fichier de données
 
   // lecture des arguments du problème
   arguments_coloriage(argv,narg,nbcol);
@@ -65,7 +65,7 @@ int main (int argc, char** argv) {
 
   // allocation de l'objet pour les stats
   Statistiques=new Stat_GWW (1, nbessais);
-  
+
   // argument pour la trace
   arguments_tracemode(argv,narg);
   // pour la récupération du signal 10
@@ -74,7 +74,7 @@ int main (int argc, char** argv) {
   // creation du probleme (lecture des données, création des structures de données et du problème)
   ImpasseColor* problem = impasse_problem_creation (nbcol,degre,file);
 
-  // creation de la population et initialisation 
+  // creation de la population et initialisation
   // La population : tableau de configurations
   problem->domainsize++; // pour la valeur supplementaire soit dans la structure des conflits
   Configuration* population[taille];
@@ -85,19 +85,19 @@ int main (int argc, char** argv) {
   // initialisation des statistiques
   Statistiques->init_pb(0);
 
-  // boucle sur les essais 
+  // boucle sur les essais
 
   for(int nessai = 0;nessai< nbessais ; nessai++)
     executer_essai (problem,algo,population,taille,graine1,nessai);
 
-  // ecriture statistiques 
-  Statistiques->current_try++; 
+  // ecriture statistiques
+  Statistiques->current_try++;
   ecriture_stat_probleme();
   delete problem;
-  cout << "Fin résolution " << Statistiques->total_execution_time << endl;
+  std::cout << "Fin résolution " << Statistiques->total_execution_time << std::endl;
   return 0;
-  
-  
+
+
 }
 
 

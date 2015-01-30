@@ -8,7 +8,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
-#include <fstream.h>
+#include <fstream>
 #include "timer.h"
 #include "incop.h"
 #include "incoputil.h"
@@ -21,7 +21,7 @@ int main (int argc, char** argv) {
   maxclique (argc,argv,automatic_tuningmode);
   return 0;}
 
-   
+
 
 
 #include <math.h>

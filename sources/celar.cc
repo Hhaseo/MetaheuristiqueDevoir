@@ -4,12 +4,13 @@ dans celarincr.cc et celarfullincr.cc) */
 
 #include <cerrno>
 #include <stdio.h>
-
+#include <iostream>
 
 #include <list>
 #include <vector>
 #include <string>
 #include <set>
+#include <cstdlib>
 using namespace std;
 #include <fstream>
 #include "incop.h"
@@ -22,19 +23,19 @@ using namespace std;
 
 
 extern ofstream* ofile;  // le fichier de sortie
-extern Stat_GWW * Statistiques; 
+extern Stat_GWW * Statistiques;
 
 
 CelarCSProblem* celar_problem_creation (ifstream & file, int varcost)
 { int nbvar; int nbconst;
   lire_debut_celar (file,nbvar,nbconst);
-  int **constraint1; 
+  int **constraint1;
 
   constraint1 =  csp_constraintdatastructure(nbvar);
 
   int* dom = new int[nbvar];
-  
-  vector<int>* tabdom = new vector<int> [nbvar] ; // les differents types de domaines 
+
+  vector<int>* tabdom = new vector<int> [nbvar] ; // les differents types de domaines
   // Initialisation des structures de données des problèmes
   vector<int>* connex = new vector<int> [nbvar];
 
@@ -115,11 +116,11 @@ tailledomaines[7]=22;
       tabindex[0][tabledomaines0[i]]=i;
       }
     //    int k=0;
-    
+
     for (int i =0 ; i<tailledomaines[1];i++)
 	tabledomaines[1].push_back(tabledomaines1[i]);
     for (int i =0 ; i<tailledomaines[1]-1;i++)
-	
+
 	for (int k= tabledomaines1[i]; k< tabledomaines1[i+1]; k++)
 	  tabindex[1][k]=i;
     for (int k= tabledomaines1[tailledomaines[1]-1]; k<800; k++)
@@ -129,7 +130,7 @@ tailledomaines[7]=22;
     for (int i =0 ; i<tailledomaines[2];i++)
 	tabledomaines[2].push_back(tabledomaines2[i]);
     for (int i =0 ; i<tailledomaines[2]-1;i++)
-	
+
 	for (int k= tabledomaines2[i]; k< tabledomaines2[i+1]; k++)
 	  tabindex[2][k]=i;
     for (int k= tabledomaines2[tailledomaines[2]-1]; k<800; k++)
@@ -228,7 +229,7 @@ tabsymdomaines[764]=526;
 tabsymdomaines[778]=540;
 tabsymdomaines[792]=554;
 
- 
+
 }
 
 
@@ -254,7 +255,7 @@ void CelarCSProblem::random_configuration(Configuration* configuration)
     }
   }
 }
- 
+
 /* pour le Celar, on modifie explicitement la variable paire (la variable impaire suivra automatiquement) */
 int CelarCSProblem::random_variable(Configuration* configuration)
 {int var_changee= (int) (drand48() * nbvar);
@@ -270,7 +271,7 @@ int CelarCSProblem::random_conflict_variable(Configuration* configuration)
 
 /* passage de l'index dans le domaine à la valeur */
 int CelarCSProblem::index2value (int index, int var)
-{return tabdomains[domains[var]][index];   
+{return tabdomains[domains[var]][index];
 }
 
 /* passage d'une valeur à l'index dans le domaine*/
@@ -298,11 +299,11 @@ void CelarCSProblem::fullincr_update_conflicts(FullincrCSPConfiguration* configu
 
 
 void CelarCSProblem::fullincr_update_conflicts_1(FullincrCSPConfiguration* configuration,int var_changee, int val_changee)
-{  
+{
   int valmin; int valmax;
   int numero_contrainte; int dist;
   for (vector<int>::iterator vi= connections[var_changee].begin();vi!= connections[var_changee].end(); vi++)
-    {   
+    {
       numero_contrainte =  constraints[*vi][var_changee];
       dist= distance[numero_contrainte];
       valmax = val_changee + dist;
@@ -324,22 +325,22 @@ void CelarCSProblem::fullincr_update_conflicts_1(FullincrCSPConfiguration* confi
     }
 }
 
-      
+
 
 
 void CelarCSProblem::incr_update_conflicts_1(IncrCSPConfiguration* configuration,int var_changee, int val_changee)
-{  
+{
   int nb_conflits_apres=0;
   int numero_contrainte;
   for (vector<int>::iterator vi= connections[var_changee].begin();vi!= connections[var_changee].end(); vi++)
-    {   
+    {
       numero_contrainte =  constraints[*vi][var_changee];
     if (abs (configuration->config[*vi]   - configuration->config[var_changee])
-	<= distance[numero_contrainte]) 
+	<= distance[numero_contrainte])
 
       configuration->tabconflicts[*vi]-=valconst[numero_contrainte];
     if (abs (configuration->config[*vi] - val_changee)
-	<= distance[numero_contrainte]) 
+	<= distance[numero_contrainte])
       {nb_conflits_apres += valconst[numero_contrainte];
 
 	  configuration->tabconflicts[*vi]+=valconst[numero_contrainte];
@@ -350,14 +351,14 @@ void CelarCSProblem::incr_update_conflicts_1(IncrCSPConfiguration* configuration
    configuration->tabconflicts[var_changee]=nb_conflits_apres;
    if (varcost && refcost[var_changee]!=0 && refvalue[var_changee] != val_changee)
      configuration->tabconflicts[var_changee]+= refcost[var_changee];
-     
+
 }
 
 
 
 
 void CelarCSProblem::move_execution(Configuration* configuration,Move* move)
-{ 
+{
   OpProblem::move_execution(configuration,move);
   int var_changee = ((CSPMove*)move)-> variable;
   int val_changee = ((CSPMove*)move)-> value;
@@ -366,21 +367,21 @@ void CelarCSProblem::move_execution(Configuration* configuration,Move* move)
 }
 
 int CelarCSProblem::move_evaluation(Configuration* configuration,Move* move)
-{ 
+{
   int var_changee = ((CSPMove*)move)-> variable;
   int val_changee = ((CSPMove*)move)-> value;
-  int  valeur_config_changee = 
+  int  valeur_config_changee =
     move_evaluation1(configuration,configuration->valuation,var_changee,val_changee);
-  valeur_config_changee = 
+  valeur_config_changee =
     move_evaluation1 (configuration, valeur_config_changee,var_changee+1,
 		      tabsymdomaines[val_changee]);
 
   //  *ofile << "  mouvement " << var_changee << " "  << val_changee << " valeur " << valeur_config_changee << endl;
   return valeur_config_changee;
 }
-	 
+
 /* evaluation d'un mouvement elementaire : redefini de manière optimisée dans
-celarincr.cc et celarfullincr.cc 
+celarincr.cc et celarfullincr.cc
  -  en commentaire : version non optimisée pour configuration  quelconque  */
 
 /*
@@ -406,15 +407,15 @@ int CelarCSProblem::compute_conflict(Configuration* configuration, int var , int
   int numero_contrainte;
   if (varcost)
     {if (refvalue[var]!=0)
-      if (refvalue[var] != val) 
+      if (refvalue[var] != val)
 	nb_conflits+= refcost[var];
     }
-      
+
   for (vector<int>::iterator vi= connections[var].begin();vi!= connections[var].end(); vi++)
-    { 
+    {
 	numero_contrainte =  constraints[*vi][var];
       if (abs (configuration->config[*vi] - val)
-	  <= distance[numero_contrainte]) 
+	  <= distance[numero_contrainte])
 	nb_conflits += valconst[numero_contrainte];
     }
   return nb_conflits;
@@ -439,17 +440,17 @@ void lire_suite_celar(ifstream & file,int nbvar,int* domaines,int * numerovariab
 {
   int i1,i2,i3,i4;
   for(int i=0;i<nbvar;i++)
-    {	
+    {
     file >> i1 ; file >> i2;
-    
+
 	//	char str[10];
 	//	sprintf(str,"%d\0",i1);
     domaines[i]=i2;
     numerovariable[i]=i1;
     if (varcost)
-      {file >> i3; 
+      {file >> i3;
       refvalue[i]=i3;
-      if (i3) 
+      if (i3)
 	{file >> i4;
 	refcost[i]=i4;}
       else refcost[i]=0;
@@ -459,14 +460,16 @@ void lire_suite_celar(ifstream & file,int nbvar,int* domaines,int * numerovariab
   if (varcost)
     { file >> i1; file >> i2 ; file >> i3; file >> i4;
     for (int i =0; i< nbvar; i++)
-      {if (refvalue[i]!=0)
-	if (refcost[i] == 1) refcost[i]=i4;
-	else if (refcost[i]==2) refcost[i]=i3;
-	else if (refcost[i]==3) refcost[i]=i2;
-	else if (refcost[i]==4) refcost[i]=i1;
+      {
+          if (refvalue[i]!=0) {
+            if (refcost[i] == 1) refcost[i]=i4;
+            else if (refcost[i]==2) refcost[i]=i3;
+            else if (refcost[i]==3) refcost[i]=i2;
+            else if (refcost[i]==4) refcost[i]=i1;
+          }
       }
     }
-  
+
 }
 
 
@@ -474,7 +477,7 @@ void lire_fichier_celar (ifstream& file, int nbvar, vector<int>* connexions,int 
 int* valconst,
 int* numerovariable)
 { int i1,i2,i3,i4,i5;
-int k1; int k2; int k3; 
+int k1; int k2; int k3;
 
  int  j=1; // on commence a numeroter a 1 (constraint1[i][j]=0 signifie pas de contraintes)
 int c1,c2,c3,c4;
@@ -521,7 +524,7 @@ int celarcsp(int argc, char** argv, int tuningmode) {
   ofstream ofile1 (filename);
   ofile = & ofile1;
 
-  ifstream file (argv[2]); // le fichier de données 
+  ifstream file (argv[2]); // le fichier de données
   int varcost=0;
   if  ((string)argv[2]== "celar9.txt" || (string)argv[2]=="celar10.txt")
     varcost=1;
@@ -531,12 +534,12 @@ int celarcsp(int argc, char** argv, int tuningmode) {
 
   // allocation de l'objet pour les stats
   Statistiques=new Stat_GWW (1, nbessais);
-  
+
   // argument pour la trace
   arguments_tracemode(argv,narg);
   // pour la recuperation du signal 10
   sigaction();
-  // argument de temps maximum 
+  // argument de temps maximum
   double maxtime;
   if (tuningmode)  arguments_tempscpu (argv,narg,maxtime);
 
@@ -548,7 +551,7 @@ int celarcsp(int argc, char** argv, int tuningmode) {
   if ((string)argv[2]=="celar6.txt") problem->lower_bound = 3389;
   if ((string)argv[2]=="celar8.txt") problem->lower_bound = 150;
   if ((string)argv[2]=="celar7.txt") problem->lower_bound = 300000;
-  // creation de la population et initialisation 
+  // creation de la population et initialisation
   // La population : tableau de configurations
   Configuration* population[taille];
   problem->init_population(population,taille);
@@ -557,24 +560,24 @@ int celarcsp(int argc, char** argv, int tuningmode) {
   // initialisation des statistiques
   Statistiques->init_pb(0);
 
-  if (tuningmode) 
+  if (tuningmode)
 
     autosolving((LSAlgorithm*)algo,population,problem,0,graine1,nbessais,maxtime,1000000);
-  else 
-  // boucle sur les essais 
+  else
+  // boucle sur les essais
 
 {  for(int nessai = 0;nessai< nbessais ; nessai++)
     executer_essai (problem,algo,population,taille,graine1,nessai);
 
-  // ecriture statistiques 
-  Statistiques->current_try++; 
+  // ecriture statistiques
+  Statistiques->current_try++;
   ecriture_stat_probleme();
 }
     delete problem;
-  cout << "Fin résolution " << Statistiques->total_execution_time << endl;
+  std::cout << "Fin résolution " << Statistiques->total_execution_time << std::endl;
   return 0;
-  
-  
+
+
 }
 
 

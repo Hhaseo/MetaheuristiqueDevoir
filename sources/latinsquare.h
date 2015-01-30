@@ -11,7 +11,7 @@ int config_evaluation(Configuration * Configuration);
   Configuration* create_configuration();
 void move_execution(Configuration* configuration,Move* move);
 int move_evaluation (Configuration* configuration,Move* move);
-Move* Latinsquare::create_move();
+Move* create_move();
 void next_move (Configuration* configuration, Move* move, NeighborhoodSearch* nbhs);
 void random_configuration(Configuration* configuration);
 void compute_var_conflict(Configuration* configuration);
@@ -21,7 +21,7 @@ void adjust_parameters(Configuration* configuration, int& maxneighbors, int& min
 
 
 class SBLatinsquare : public Latinsquare
-{ public : 
+{ public :
   SBLatinsquare(int size);
 int config_evaluation(Configuration * Configuration);
   void fullincr_update_conflicts(FullincrCSPConfiguration* configuration,Move* move);

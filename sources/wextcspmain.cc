@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <list>
 #include <vector>
+#include <cstring>
 #include <string>
 #include <set>
 #include <algorithm>
@@ -23,12 +24,12 @@ using namespace std;
 /** le lecteur des fichiers au format ds de Simon de Givry
     pour le moment, ne lit que des problèmes avec contraintes binaires en extension , les valeurs des domaines
 doivent être des entiers.
-Quelques limitations dues à l'utilisation de tableaux (nb variables, nb contraintes, nb d'instances de problèmes 
+Quelques limitations dues à l'utilisation de tableaux (nb variables, nb contraintes, nb d'instances de problèmes
 */
 
 extern ofstream* ofile;  // le fichier de sortie
 
-extern Stat_GWW * Statistiques; 
+extern Stat_GWW * Statistiques;
 
 
 WeightExtensionBinaryCSProblem* weighted_csp(int nbvar, int nbconst, int s, vector <int> ** constraint1, int*** constraint2, vector<int>& wei)
@@ -55,7 +56,7 @@ void  dsdata_file_read (ifstream & file, int& nbvar,int& tabu, vector<string> & 
  int nb=0;
  file >> tt; // nom du  probleme
  file >> tt;
- if ((tt == "tabu") || (tt =="tabu_valued")) 
+ if ((tt == "tabu") || (tt =="tabu_valued"))
    tabu=1;
  if ((tt== "classic") || (tt == "valued") || (tt == "tabu") || (tt == "tabu_valued") || (tt == " tabu_classic"))
    file >> tt;
@@ -87,7 +88,7 @@ int value_number(int value, vector<int>& tabdomaine)
     return i;
   }
 return -1;
-} 
+}
 
 
 /* utilitaire : recherche la place d'une chaine dans un vecteur */
@@ -97,13 +98,13 @@ int string_number(string& value, vector<string>& variablename)
     return i;
   }
 return -1;
-} 
+}
 
 /** lecture des contraintes */
-void  dsdata_constraint_read (ifstream & file, int& nbconst,vector<string> & variable_names, vector<string> & constraint_names, 
+void  dsdata_constraint_read (ifstream & file, int& nbconst,vector<string> & variable_names, vector<string> & constraint_names,
 vector<int>& variable1, vector<int>& variable2, int tabu,
 int*** constraint2,   vector<int> * tabdomaines, vector<int>& weight)
-{ 
+{
   string tt;
   string tt1; int n1;
   string tt2; int n2;
@@ -113,7 +114,7 @@ int*** constraint2,   vector<int> * tabdomaines, vector<int>& weight)
   while(tt != "%")
     {constraint_names.push_back(tt);
     file >> tt;
-    if (tt != "extension") 
+    if (tt != "extension")
       {weight.push_back(atoi( tt.c_str())); file >> tt;}
     else
       weight.push_back(1);
@@ -128,7 +129,7 @@ int*** constraint2,   vector<int> * tabdomaines, vector<int>& weight)
     else
       {variable1.push_back(n2);
       variable2.push_back(n1);}
- 
+
     file >> tt ;
     while ((tt != "#") && (tt != "%"))
       {file >> tt2;
@@ -150,13 +151,13 @@ int*** constraint2,   vector<int> * tabdomaines, vector<int>& weight)
 
 
 /** lecture des instances : quelles contraintes sont dans le probleme : remplissage du tableau constraint1 */
-void dsdata_instance_read(ifstream& file, int& nbconst,vector<int>& variable1, vector<int>& variable2, vector<int>** constraint1, 
+void dsdata_instance_read(ifstream& file, int& nbconst,vector<int>& variable1, vector<int>& variable2, vector<int>** constraint1,
 			  vector<string> & constraint_names)
 {
   nbconst=0;
   string tt;
   file >> tt;
-  file >> tt; 
+  file >> tt;
   while ((tt != "%") && (! file.eof()))
     {
     int nc1= string_number(tt,constraint_names);
@@ -171,7 +172,7 @@ void dsdata_instance_read(ifstream& file, int& nbconst,vector<int>& variable1, v
 
 vector<int>** wextcsp_constraintdatastructure(int nbvar)
 {vector<int>** constraint1= new vector<int>*[nbvar];
-  for(int i=0;i<nbvar;i++) 
+  for(int i=0;i<nbvar;i++)
     {constraint1[i]=new vector<int>[nbvar];}
   return constraint1;
 }
@@ -179,7 +180,7 @@ vector<int>** wextcsp_constraintdatastructure(int nbvar)
 /** la fonction principale */
 int main (int argc, char** argv) {
 
-  WeightExtensionBinaryCSProblem* problem ;          // pointeur sur le probleme 
+  WeightExtensionBinaryCSProblem* problem ;          // pointeur sur le probleme
 
   // les divers arguments lus dans la ligne de commande
   int nbvar,nbconst;
@@ -196,7 +197,7 @@ int main (int argc, char** argv) {
 
   ofstream ofile1 (filename);
   ofile = & ofile1;
-  ifstream file (argv[2]); // le fichier de données 
+  ifstream file (argv[2]); // le fichier de données
 
   // les limites en dur a cause de predimensionnement de tableaux ( a changer avec des vecteurs ??)
   int MAXVAR=500;  // nb max de variables
@@ -209,7 +210,7 @@ int main (int argc, char** argv) {
 
   // allocation de l'objet pour les stats
   Statistiques=new Stat_GWW (NPBMAX, nbessais);
-  
+
 
   // argument pour la trace
   arguments_tracemode(argv,narg);
@@ -217,7 +218,7 @@ int main (int argc, char** argv) {
   sigaction();
 
   // Declaration des variables contenant les structures de données des problemes
-  vector<int> **constraint1; 
+  vector<int> **constraint1;
   int*** constraint2;
   vector<int> tabdomaines[MAXVAR] ; // les différents types de domaines - LIMITATION aux 500 variables
   // Initialisation des structures de données des problèmes
@@ -245,13 +246,13 @@ int main (int argc, char** argv) {
   int pbnumber=0;
   while (! file.eof())
     { Statistiques->init_pb(pbnumber);
-    for(int i=0;i<nbvar;i++) 
+    for(int i=0;i<nbvar;i++)
       for(int j=0;j<nbvar;j++)
 	constraint1[i][j].clear();
     dsdata_instance_read(file,nbconst,variable1,variable2,constraint1,constraint_names);
     problem = weighted_csp_creation (nbvar,nbconst,maxdomsize,constraint1,constraint2, connexions, weight);
 
-	  
+
     // mise en place des domaines et connexions
     problem->set_domains_connections(domaines,tabdomaines,connexions);
     /*
@@ -261,30 +262,30 @@ int main (int argc, char** argv) {
 	  *ofile << " " << problem->connections[i][k] ;
 	*ofile << endl;}
 	*/
-    // creation de la population et initialisation 
+    // creation de la population et initialisation
     // La population : tableau de configurations
     Configuration* population[taille];
     problem->init_population(population,taille);
- 
+
     problem->allocate_moves();
 
-    // boucle sur les essais 
+    // boucle sur les essais
     *ofile << " pb numéro " << pbnumber;
     for(int nessai = 0;nessai< nbessais ; nessai++)
       executer_essai (problem,algo,population,taille,graine1,nessai);
 
-    // ecriture statistiques 
-    Statistiques->current_try++; 
+    // ecriture statistiques
+    Statistiques->current_try++;
     ecriture_stat_probleme();
     delete problem;
     pbnumber++;}
   if (pbnumber > 1)
     ecriture_statistiques_global ();
-  
+
   cout << "Fin résolution " << Statistiques->total_execution_time << endl;
   return 0;
-  
-  
+
+
 }
 
 

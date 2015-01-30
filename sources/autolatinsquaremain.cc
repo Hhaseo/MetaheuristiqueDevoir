@@ -5,7 +5,7 @@
 #include <set>
 
 using namespace std;
-#include <fstream.h>
+#include <fstream>
 #include <string>
 
 #include "incop.h"
@@ -20,13 +20,16 @@ using namespace std;
 
 
 extern ofstream* ofile;  // le fichier de sortie
-
+#define sb true
 
 
 
 int main (int argc, char** argv) {
   int automatic_tuningmode = 1;
-  latinsquare(argc,argv,automatic_tuningmode);
+   if (sb) // probleme carré latin  équilibré
+    latinsquare(argc,argv,automatic_tuningmode, sb);
+  else  // probleme carré latin de base
+    latinsquare(argc,argv,automatic_tuningmode, sb);
   return 0;
 }
 

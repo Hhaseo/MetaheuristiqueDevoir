@@ -4,9 +4,10 @@
 #include <vector>
 #include <string>
 #include <set>
+#include <iostream>
 #include <algorithm>
 using namespace std;
-#include <fstream.h>
+#include <fstream>
 #include "incop.h"
 #include "incoputil.h"
 #include "csproblem.h"
@@ -17,10 +18,10 @@ using namespace std;
 extern ofstream* ofile;  // le fichier de sortie
 
 
-extern Stat_GWW * Statistiques; // trombe_ajout: l'objet pour les stats en var globale 
+extern Stat_GWW * Statistiques; // trombe_ajout: l'objet pour les stats en var globale
 
 
-// le problème de l'ordonnancement de voitures 
+// le problème de l'ordonnancement de voitures
 
 
 int carseq(int argc, char** argv,int tuningmode)
@@ -40,7 +41,7 @@ int carseq(int argc, char** argv,int tuningmode)
   ofstream ofile1 (filename);
   ofile = & ofile1;
 
-  ifstream file (argv[2]); // le fichier de données 
+  ifstream file (argv[2]); // le fichier de données
 
 
   // lecture des paramètres de l'algo et création de l'objet algo
@@ -48,7 +49,7 @@ int carseq(int argc, char** argv,int tuningmode)
 
   // allocation de l'objet pour les stats
   Statistiques=new Stat_GWW (1, nbessais);
-  
+
   // argument pour la trace
   arguments_tracemode(argv,narg);
   // pour la récupération du signal 10
@@ -64,7 +65,7 @@ int carseq(int argc, char** argv,int tuningmode)
   if ((string)argv[2]=="pb21-90") problem->lower_bound = 2;
   if ((string)argv[2]=="pb36-92") problem->lower_bound = 2;
   if ((string)argv[2]=="pb10-93") problem->lower_bound = 3;
-  // creation de la population et initialisation 
+  // creation de la population et initialisation
   // La population : tableau de configurations
   Configuration* population[taille];
   problem->init_population(population,taille);
@@ -78,21 +79,21 @@ int carseq(int argc, char** argv,int tuningmode)
    autosolving((LSAlgorithm*)algo,population,problem,0,graine1,nbessais,maxtime,initwalklength);
     }
   else
-    // boucle sur les essais 
+    // boucle sur les essais
 
     {for(int nessai = 0;nessai< nbessais ; nessai++)
       executer_essai (problem,algo,population,taille,graine1,nessai);
-    
-    // ecriture statistiques 
-    Statistiques->current_try++; 
+
+    // ecriture statistiques
+    Statistiques->current_try++;
     ecriture_stat_probleme();
     }
 
   delete problem;
   cout << "Fin résolution " << Statistiques->total_execution_time << endl;
   return 0;
-  
-  
+
+
 }
 
 
@@ -133,7 +134,7 @@ Carseq* carseqproblem(ifstream& file)
  //   }
  Carseq* problem= new Carseq(nbcars,nbclasses);
  int* dom = new int[nbcars];
- vector<int>* tabdom = new vector<int> [nbcars] ; // les differents types de domaines 
+ vector<int>* tabdom = new vector<int> [nbcars] ; // les differents types de domaines
   // Initialisation des structures de données des problèmes
   vector<int>* connex = new vector<int> [nbcars];
 
@@ -147,7 +148,7 @@ Carseq* carseqproblem(ifstream& file)
 
  problem->init_domain_tabdomain();
  // *ofile << " probleme entré " <<  nbcars << " voitures " << nbclasses << " classes " << endl;
- 
+
  return problem;
 }
 
@@ -155,12 +156,12 @@ Carseq::Carseq (int nbcars,int nbclasses) :
   CSProblem (nbcars,1){domainsize=nbclasses;}
 
 CarseqConfiguration::CarseqConfiguration(int nbvar,int nbopt1) :
-  Configuration(nbvar){nbopt=nbopt1; 
-  // optionconflicts=new int[nbopt]; 
+  Configuration(nbvar){nbopt=nbopt1;
+  // optionconflicts=new int[nbopt];
   conflictingvar=new int[nbvar];}
-  
+
 CarseqConfiguration::~CarseqConfiguration()
-{// delete optionconflicts; 
+{// delete optionconflicts;
   delete conflictingvar;}
 
 void CarseqConfiguration::copy_element ( Configuration* config2)
@@ -178,12 +179,12 @@ void CarseqConfiguration::copy_element ( Configuration* config2)
 
 CarseqMove::CarseqMove(int nbopt1, int nbvar1) :
   SwapMove(){nbopt=nbopt1;
- 
+
   nbvar=nbvar1;
- 
+
 }
 
-CarseqMove::~CarseqMove() 
+CarseqMove::~CarseqMove()
 {
   ;}
 
@@ -206,8 +207,8 @@ int Carseq::config_evaluation (Configuration* configuration)
 	 for (int k=0; k< blocsize[i] ; k++)
 	   if (optionsinclass[configuration->config[k+j]][i])
 	     nbcarsopt++;
-	 if (nbcarsopt > maxcars[i]) 
-	   { 
+	 if (nbcarsopt > maxcars[i])
+	   {
 
 	   for (int k=0; k< blocsize[i] ; k++)
 	     if (optionsinclass[configuration->config[k+j]][i])
@@ -244,7 +245,7 @@ void Carseq :: random_configuration(Configuration* configuration)
      {int indice = (int) (drand48() * (nbvar-placed));
      int jj =0; int val;
      for (list<int>::iterator it = not_used.begin(); it != not_used.end(); it++)
-       {if (jj == indice) 
+       {if (jj == indice)
 	 {val=*it; break;}
        jj++;}
      not_used.remove(val);
@@ -271,8 +272,8 @@ int Carseq::nbconflicts_partialconfig(Configuration* configuration,int length, i
        for (int k=0 ; k< blocsize[i]-1 ; k++)
 	 if (optionsinclass[configuration->config[k+length-blocsize[i]+1]][i])
 	   nbcarsopt++;
-       if (nbcarsopt > maxcars[i]) 
-	 { 
+       if (nbcarsopt > maxcars[i])
+	 {
 	   valeur++;}
      }
    }
@@ -282,7 +283,7 @@ int Carseq::nbconflicts_partialconfig(Configuration* configuration,int length, i
 
 
 // configuration initiale gloutonne
-/*   
+/*
 void Carseq :: random_configuration(Configuration* configuration)
 {
  int nbcarstoplace[nbclasses];
@@ -293,7 +294,7 @@ void Carseq :: random_configuration(Configuration* configuration)
       for (int i =0;i<nbclasses;i++)
 	{if (nbcarstoplace[i])
 	  {int nbconf = nbconflicts_partialconfig(configuration,j,i);
-	  if (nbconf < nbconflicts) 
+	  if (nbconf < nbconflicts)
 	    {ii=i;k1=1; nbconflicts=nbconf;}
 	  else if (nbconf==nbconflicts)
 	    {k1++;
@@ -306,7 +307,7 @@ void Carseq :: random_configuration(Configuration* configuration)
    }
 }
 */
-      
+
 Move* Carseq::create_move()
 {CarseqMove* move = new CarseqMove(nbopt,nbvar);
  return (Move*)move;
@@ -326,7 +327,7 @@ void Carseq::next_move
    var1=random_variable(configuration);
  ((SwapMove*)move)->variable1 = var1;
 
- 
+
  if (nbhs->val_conflict)   // Minton
    {var2 = chose_bestpermutation(configuration,(CarseqMove*)move);}
  else
@@ -337,7 +338,7 @@ void Carseq::next_move
  for (int indvar2=var2; indvar2<nbvar; indvar2++)
    if (configuration->config[indvar2] != configuration->config[var1])
      { var2=indvar2; var2found=1; break;}
- if (!var2found) 
+ if (!var2found)
    for (int indvar2=0; indvar2<var2; indvar2++)
      if (configuration->config[indvar2] != configuration->config[var1])
        { var2=indvar2; var2found=1;break;}
@@ -349,7 +350,7 @@ void Carseq::next_move
 int Carseq::chose_bestpermutation(Configuration* configuration, CarseqMove* move)
 {int var1= move->variable1;
  int nbconflicts=RAND_MAX; int k1=1; int var=-1;
- int var22 = (int) (drand48 () * (nbvar-(nbvar/40)));   // le meilleur echange sur nbvar/xx 
+ int var22 = (int) (drand48 () * (nbvar-(nbvar/40)));   // le meilleur echange sur nbvar/xx
  for (int var2 =var22; var2< var22 + nbvar/40 ; var2++)
    { if (configuration->config[var2] != configuration->config[var1])
      {move->variable2 = var2;
@@ -361,7 +362,7 @@ int Carseq::chose_bestpermutation(Configuration* configuration, CarseqMove* move
 	    }
      }
    }
- if (var == -1) 
+ if (var == -1)
    return var1;
  else return var;
 }
@@ -380,7 +381,7 @@ int Carseq::move_evaluation (Configuration* configuration,Move* move)
    //   *ofile << var1 << "  " << var2 << " " << ((CarseqConfiguration*)configuration)->conflictingvar[var1] << " " <<
    //     ((CarseqConfiguration*)configuration)->conflictingvar[var2] << " " << endl;
    int valeur=configuration->valuation
-     - ((CarseqConfiguration*)configuration)->conflictingvar[var1] - 
+     - ((CarseqConfiguration*)configuration)->conflictingvar[var1] -
      ((CarseqConfiguration*)configuration)->conflictingvar[var2]
       + partialconflicts(configuration,var1,var2) + partialconflicts(configuration,var2,var1);
 
@@ -401,12 +402,12 @@ int Carseq::partialconflicts(Configuration* configuration, int var1, int var2)
      {// *ofile << "option " << i << " maxcars " << maxcars[i] << " blocsize " << blocsize[i] << endl;
      int j= var1-blocsize[i]+1; if (j<0) j=0;
      for (int k=j; k< var1+1  && k  + blocsize[i] -1 < nbvar; k++)
-       {int nbcarsopt=0; 
+       {int nbcarsopt=0;
        for (int k1=0; k1< blocsize[i]; k1++)
 	 if (optionsinclass[configuration->config[k+k1]][i] )
 	   nbcarsopt++;
        // * ofile << " option " << i << " nbcarsopt " << nbcarsopt << endl;
-       if (nbcarsopt > maxcars[i]) 	 
+       if (nbcarsopt > maxcars[i])
 	 {valeur++; // *ofile << var1 << "  " << var2 <<  " " << i << "  " << valeur << endl;
 	 }
        }
@@ -422,9 +423,9 @@ int Carseq::partialconflicts(Configuration* configuration, int var1, int var2)
 
 
 
-// mise a jour de la structure de données des variables en conflit 
+// mise a jour de la structure de données des variables en conflit
 void Carseq::update_conflicting_variables (Configuration* configuration,Move* move)
-{ 
+{
   int var1 = ((SwapMove*) move)->variable1;
   int var2 = ((SwapMove*) move)->variable2;
   int var3=var1;
@@ -436,17 +437,17 @@ void Carseq::update_conflicting_variables (Configuration* configuration,Move* mo
 	{
 	  int j= var1-blocsize[i]+1; if (j<0) j=0;
 	  for (int k=j; k< var1+1  && k  < var2- blocsize[i] +1; k++)
-	    {int nbcarsopt=0; 
+	    {int nbcarsopt=0;
 	    for (int k1=0; k1< blocsize[i]; k1++)
 	      if (optionsinclass[configuration->config[k+k1]][i])
 		nbcarsopt++;
-	    if (nbcarsopt == maxcars[i]+1) 
+	    if (nbcarsopt == maxcars[i]+1)
 	      {
 		for (int k1=0; k1< blocsize[i]; k1++)
 		  if (optionsinclass[configuration->config[k+k1]][i])
 		    {((CarseqConfiguration*)configuration)->conflictingvar[k+k1]--;
 		    }
-	
+
 	      }
 	    if (nbcarsopt > maxcars[i]+1)
 	      ((CarseqConfiguration*)configuration)->conflictingvar[var1]--;
@@ -460,41 +461,41 @@ void Carseq::update_conflicting_variables (Configuration* configuration,Move* mo
 		{if (optionsinclass[configuration->config[k+k1]][i])
 		  nbcarsopt++;}
 	      if (nbcarsopt > maxcars[i])
-		{    
+		{
 		  ((CarseqConfiguration*)configuration)->conflictingvar[var1]--;
 		  ((CarseqConfiguration*)configuration)->conflictingvar[var2]++;
 		}
 	      }
-	  
+
 	    j=var1+1;
 	  }
 
 	for (int k=j; k< var2+1  && k + blocsize[i] < nbvar +1 ; k++)
-	  {int nbcarsopt=0; 
+	  {int nbcarsopt=0;
 	  for (int k1=0; k1< blocsize[i]; k1++)
 	    if (optionsinclass[configuration->config[k+k1]][i])
 	      nbcarsopt++;
-	  if (nbcarsopt == maxcars[i]) 
+	  if (nbcarsopt == maxcars[i])
 	    {
 	      for (int k1=0; k1< blocsize[i]; k1++)
 		if ((optionsinclass[configuration->config[k+k1]][i]) || (k+k1 == var2))
 		  ((CarseqConfiguration*)configuration)->conflictingvar[k+k1]++;
 
-	      
-	
+
+
 	    }
-	  if (nbcarsopt > maxcars[i]) 
-	    {		
-	      ((CarseqConfiguration*)configuration)->conflictingvar[var2]++; 
+	  if (nbcarsopt > maxcars[i])
+	    {
+	      ((CarseqConfiguration*)configuration)->conflictingvar[var2]++;
 	    }
 	  }
 	}
-      else if 
+      else if
 	(optionsinclass[configuration->config[var2]][i]&&
 	 ! optionsinclass[configuration->config[var1]][i])
 	{int j= var1-blocsize[i]+1; if (j<0) j=0;
 	for (int k=j; k< var1+1  && k < var2- blocsize[i] +1; k++)
-	  {int nbcarsopt=0; 
+	  {int nbcarsopt=0;
 	  for (int k1=0; k1< blocsize[i]; k1++)
 	    if (optionsinclass[configuration->config[k+k1]][i])
 	      nbcarsopt++;
@@ -503,7 +504,7 @@ void Carseq::update_conflicting_variables (Configuration* configuration,Move* mo
 	      for (int k1=0; k1< blocsize[i]; k1++)
 		if ((optionsinclass[configuration->config[k+k1]][i]) || (k+k1 == var1))
 		  ((CarseqConfiguration*)configuration)->conflictingvar[k+k1]++;
-	
+
 	    }
 	  if (nbcarsopt > maxcars[i])
 	    ((CarseqConfiguration*)configuration)->conflictingvar[var1]++;
@@ -517,17 +518,17 @@ void Carseq::update_conflicting_variables (Configuration* configuration,Move* mo
 		{if (optionsinclass[configuration->config[k+k1]][i])
 		  nbcarsopt++;}
 	      if (nbcarsopt > maxcars[i])
-		{    
+		{
 		  ((CarseqConfiguration*)configuration)->conflictingvar[var1]++;
 		  ((CarseqConfiguration*)configuration)->conflictingvar[var2]--;
 		}
-		
+
 	      }
 	    j=var1+1;
 	  }
-	
+
 	for (int k=j; k< var2+1  && k + blocsize[i] < nbvar +1; k++)
-	  {int nbcarsopt=0; 
+	  {int nbcarsopt=0;
 	  for (int k1=0; k1< blocsize[i]; k1++)
 	    if (optionsinclass[configuration->config[k+k1]][i])
 	      nbcarsopt++;
@@ -536,13 +537,13 @@ void Carseq::update_conflicting_variables (Configuration* configuration,Move* mo
 	      for (int k1=0; k1< blocsize[i]; k1++)
 		if (optionsinclass[configuration->config[k+k1]][i])
 		  ((CarseqConfiguration*)configuration)->conflictingvar[k+k1]--;
-		
+
 	    }
 	  if (nbcarsopt > maxcars[i]+1)
 	    ((CarseqConfiguration*)configuration)->conflictingvar[var2]--;
 
 	  }
-	
+
 	}
       }
 }
@@ -550,11 +551,11 @@ void Carseq::update_conflicting_variables (Configuration* configuration,Move* mo
 
 void Carseq::move_execution(Configuration* configuration,Move* move)
 {update_conflicting_variables (configuration,move);
- OpProblem::move_execution(configuration,move); 
+ OpProblem::move_execution(configuration,move);
  int aval = configuration->config[((SwapMove*) move)->variable1];
  configuration->config[((SwapMove*) move)->variable1]=configuration->config[((SwapMove*) move)->variable2];
  configuration->config[((SwapMove*) move)->variable2]=aval;
- 
+
 }
 
 
@@ -589,7 +590,7 @@ int Carseq::tabuinverseindex(Move* move,Configuration* configuration)
 {return (((SwapMove*)move)->variable1 * domainsize + configuration->config[((SwapMove*)move)->variable1]);}
 
 
-void Carseq::best_config_analysis() 
+void Carseq::best_config_analysis()
   {;}
 //  {best_config_write();}
 

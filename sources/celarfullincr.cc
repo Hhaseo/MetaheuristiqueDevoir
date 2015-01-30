@@ -2,7 +2,7 @@
 
 
 
-
+#include <cstdlib>
 #include <list>
 #include <vector>
 #include <string>
@@ -26,7 +26,7 @@ Configuration* CelarCSProblem::create_configuration ()
 
 /* redéfinition des variables en conflit surtout utile pour celar7 :
  le fait qu'une variable soit en conflit dépend de la valeur de la configuration courante */
-// optimise pour fullincr 
+// optimise pour fullincr
 
 
 void CelarCSProblem::compute_var_conflict(Configuration* configuration)
@@ -42,7 +42,7 @@ void CelarCSProblem::compute_var_conflict(Configuration* configuration)
  //*ofile << " nb var conflits " << configuration->var_conflict.size() << endl;
 }
 
- 
+
 // critere additif des celar 6,7,8  -  implantation pour  tout  incr
 
 
@@ -69,7 +69,7 @@ int CelarCSProblem::config_evaluation(Configuration* configuration)
 }
 
 
-      
+
 
 
 
@@ -81,7 +81,7 @@ int CelarCSProblem::config_evaluation(Configuration* configuration)
 int CelarCSProblem::move_evaluation1(Configuration* configuration,int valeur,int var_changee,int val_changee)
 {
   return(valeur+((FullincrCSPConfiguration*)configuration)->tabconflicts[var_changee][value2index(val_changee,var_changee)]
-									 
+
                -((FullincrCSPConfiguration*)configuration)->tabconflicts[var_changee][value2index(configuration->config[var_changee],var_changee)]);
 }
 

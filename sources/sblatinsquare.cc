@@ -2,9 +2,10 @@
 #include <vector>
 #include <string>
 #include <set>
+#include <iostream>
 #include <algorithm>
 using namespace std;
-#include <fstream.h>
+#include <fstream>
 #include "incop.h"
 #include "csproblem.h"
 #include "latinsquare.h"
@@ -22,8 +23,8 @@ return p1;
 SBLatinsquare* sblatinsquare_problem_creation (int nbvar)
 {
   int* dom = new int[nbvar*nbvar];
-  
-  vector<int>* tabdom = new vector<int> [nbvar*nbvar] ; // les differents types de domaines 
+
+  vector<int>* tabdom = new vector<int> [nbvar*nbvar] ; // les differents types de domaines
   // Initialisation des structures de données des problèmes
   vector<int>* connex = new vector<int> [nbvar*nbvar];
 
@@ -57,7 +58,7 @@ int distance_balance (int sumdist,int  size)
 
 int distance_balance1 (int sumdist,int  obj)
 {
-  return abs (sumdist - obj) 
+  return abs (sumdist - obj)
    ;}
 
 
@@ -72,12 +73,12 @@ int SBLatinsquare::config_evaluation (Configuration* configuration)
  int valcl = valeur;
 
  *ofile << " contraintes de carré latin " << valcl;
- //   pour l'equilibre  moyenne distances (i,j) = n+1/3 
+ //   pour l'equilibre  moyenne distances (i,j) = n+1/3
  for (int i=0; i< squaresize-1; i++)
    for (int j=i+1 ; j< squaresize; j++)
      {int sumdist=0;
      for (int k=0; k< squaresize; k++)
-       {       
+       {
        sumdist+=compute_distance_line(configuration,k,i,j,squaresize);
        }
      configuration->incr_conflicts(squaresize+ i*squaresize + j,0,0,sumdist);
@@ -87,7 +88,7 @@ int SBLatinsquare::config_evaluation (Configuration* configuration)
  *ofile << " contraintes d'équilibrage " << valeur-valcl << endl;
  return valeur;
 }
-			 
+
 
 
 
@@ -96,7 +97,7 @@ int SBLatinsquare::config_evaluation (Configuration* configuration)
 // 2 parties : carre latin  et equilibrage
 // la structure des donnees des conflits est en 2 parties
 // tabconflicts [i,j]  colonne i valeur j  : nombre d'occurrences de la valeur j dans la colonne i
-// tabconflicts [squaresize + squaresize * valeur (ligne,col) + valeur(ligne,col2), 0] :  avec valeur(ligne,col) < valeur(ligne,col2) : somme des distances entre les deux valeurs 
+// tabconflicts [squaresize + squaresize * valeur (ligne,col) + valeur(ligne,col2), 0] :  avec valeur(ligne,col) < valeur(ligne,col2) : somme des distances entre les deux valeurs
 
 int SBLatinsquare::move_evaluation (Configuration* configuration,Move* move)
 {
@@ -106,7 +107,7 @@ int SBLatinsquare::move_evaluation (Configuration* configuration,Move* move)
   int val1= configuration->config[variable1];
   int val2= configuration->config[variable2];
   int objdist= squaresize * (squaresize+1)/3;
-  /* valeur sans l'increment des contraintes d'équilibrage */  
+  /* valeur sans l'increment des contraintes d'équilibrage */
    int nval = 3* Latinsquare::move_evaluation(configuration,move) - 2*configuration->valuation;
   //    int nval = 2* Latinsquare::move_evaluation(configuration,move) - configuration->valuation;
    //  int nval =  Latinsquare::move_evaluation(configuration,move);
@@ -126,30 +127,30 @@ int SBLatinsquare::move_evaluation (Configuration* configuration,Move* move)
 	  ancdist = ((FullincrCSPConfiguration*)configuration)->tabconflicts[squaresize+ val*squaresize + val1][0] ;
 	else
 	  ancdist = ((FullincrCSPConfiguration*)configuration)->tabconflicts[squaresize+ val1*squaresize + val][0] ;
-        nval += distance_balance1 (ancdist+ deltadist, objdist) - 
+        nval += distance_balance1 (ancdist+ deltadist, objdist) -
 	  distance_balance1 (ancdist, objdist);
         if (val < val2)
 	  ancdist = ((FullincrCSPConfiguration*)configuration)->tabconflicts[squaresize+ val*squaresize + val2][0]  ;
 	else
 	  ancdist = ((FullincrCSPConfiguration*)configuration)->tabconflicts[squaresize+ val2*squaresize + val][0]  ;
-        nval += distance_balance1 (ancdist - deltadist, objdist) - 
+        nval += distance_balance1 (ancdist - deltadist, objdist) -
 	  distance_balance1 (ancdist, objdist);
       }
   for (int i=var1+1;i<var2;i++)
       {  int val= configuration->config[squaresize*line + i];
       //        cout << "cas B :  Val " << val << " val1 " << val1 << " val2 " << val2 << endl;
       deltadist = var2+ var1 -2 *i ;
-      if (val < val1) 
+      if (val < val1)
 	ancdist = ((FullincrCSPConfiguration*)configuration)->tabconflicts[squaresize+ val*squaresize + val1][0]  ;
       else
 	ancdist = ((FullincrCSPConfiguration*)configuration)->tabconflicts[squaresize+ val1*squaresize + val][0]  ;
-      nval += distance_balance1 (ancdist+ deltadist, objdist) - 
+      nval += distance_balance1 (ancdist+ deltadist, objdist) -
 	distance_balance1 (ancdist, objdist);
       if (val < val2)
 	ancdist = ((FullincrCSPConfiguration*)configuration)->tabconflicts[squaresize+ val*squaresize + val2][0]  ;
       else
 	ancdist = ((FullincrCSPConfiguration*)configuration)->tabconflicts[squaresize+ val2*squaresize + val][0]  ;
-      nval += distance_balance1 (ancdist - deltadist, objdist) - 
+      nval += distance_balance1 (ancdist - deltadist, objdist) -
 	distance_balance1 (ancdist, objdist);
 
       }
@@ -160,20 +161,20 @@ int SBLatinsquare::move_evaluation (Configuration* configuration,Move* move)
 	if (val < val2)
 
 	  ancdist = ((FullincrCSPConfiguration*)configuration)->tabconflicts[squaresize+ val*squaresize + val2][0]  ;
-	else 
+	else
 	  ancdist = ((FullincrCSPConfiguration*)configuration)->tabconflicts[squaresize+ val2*squaresize + val][0]  ;
-	nval += distance_balance1 (ancdist+ deltadist, objdist) - 
+	nval += distance_balance1 (ancdist+ deltadist, objdist) -
 	  distance_balance1 (ancdist, objdist);
 	if (val < val1)
 	  ancdist = ((FullincrCSPConfiguration*)configuration)->tabconflicts[squaresize+ val*squaresize + val1][0] ;
 	else
 	  ancdist = ((FullincrCSPConfiguration*)configuration)->tabconflicts[squaresize+ val1*squaresize + val][0]  ;
-	nval += distance_balance1 (ancdist - deltadist, objdist) - 
+	nval += distance_balance1 (ancdist - deltadist, objdist) -
 	  distance_balance1 (ancdist, objdist);
       }
   return (nval);
 }
-			 
+
 
 void SBLatinsquare::fullincr_update_conflicts (FullincrCSPConfiguration* configuration,Move* move)
 {
@@ -196,7 +197,7 @@ if (variable1< variable2)
     {var1=((ColSwMove*)move)-> variable2;var2=((ColSwMove*)move)-> variable1;
     val1= configuration->config[variable2];val2= configuration->config[variable1]; }
 // le stockage des contraintes d'equilibrage : on stocke la somme des differences entre les places de val1 et val2
-  int deltadist=0; 
+  int deltadist=0;
   // les distances avec valeurs val placées avant val1
   for (int i=0;i<var1;i++)
       {  int val= configuration->config[squaresize*line + i];
@@ -218,7 +219,7 @@ if (variable1< variable2)
   for (int i=var1+1;i<var2;i++)
       {  int val= configuration->config[squaresize*line + i];
       deltadist = var2+ var1 -2 *i ;
-      if (val < val1) 
+      if (val < val1)
 	{
 	configuration->tabconflicts[squaresize+ val*squaresize + val1][0]+= deltadist  ;}
       else
@@ -238,7 +239,7 @@ if (variable1< variable2)
 	if (val < val2)
 	  {
 	  configuration->tabconflicts[squaresize+ val*squaresize + val2][0] += deltadist  ;}
-	else 
+	else
 	  {
 	  configuration->tabconflicts[squaresize+ val2*squaresize + val][0] += deltadist  ;}
 	if (val < val1)

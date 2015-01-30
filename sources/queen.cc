@@ -2,9 +2,10 @@
 #include <vector>
 #include <set>
 #include <string>
+#include <iostream>
 #include <algorithm>
 using namespace std;
-#include <fstream.h>
+#include <fstream>
 #include "incop.h"
 #include "csproblem.h"
 #include "queen.h"
@@ -12,17 +13,17 @@ using namespace std;
 
 extern ofstream* ofile;  // le fichier de sortie
 
-/* le probleme des N-reines : 3 implantations 
-Nqueen : CSP classique - mouvement changement valeur d'une variable 
+/* le probleme des N-reines : 3 implantations
+Nqueen : CSP classique - mouvement changement valeur d'une variable
 SWNqueen : mouvement de type SwapMove : permutation des valeurs de 2 variables en tout incrémental
-SWNiNqueen : mouvement de type SwapMove :  pas d'incrementalité : version la plus rapide 
+SWNiNqueen : mouvement de type SwapMove :  pas d'incrementalité : version la plus rapide
 */
 
 Nqueen* queen_problem_creation (int nbvar)
 {
   int* dom = new int[nbvar];
-  
-  vector<int>* tabdom = new vector<int> [nbvar] ; // les differents types de domaines 
+
+  vector<int>* tabdom = new vector<int> [nbvar] ; // les differents types de domaines
   // Initialisation des structures de données des problèmes
   vector<int>* connex = new vector<int> [nbvar];
 
@@ -37,7 +38,7 @@ Nqueen* queen_problem_creation (int nbvar)
 }
 
 void Nqueen::init_domaines(int nbvar, int s)
-{for (int i=0;i<nbvar;i++) 
+{for (int i=0;i<nbvar;i++)
   domains[i]=0;
 }
 
@@ -76,13 +77,13 @@ int Nqueen::config_evaluation (Configuration* configuration)
  /* for (int i =0 ; i< nbvar ; i++)
    *ofile << configuration.config[i] << " " ;
    *ofile << endl;*/
- return valeur;	 
- 
+ return valeur;
+
 }
 
 
 void Nqueen::fullincr_update_conflicts(FullincrCSPConfiguration* configuration,Move* move)
- 
+
 {int var_changee = ((CSPMove*)move)-> variable;
   int val_changee = ((CSPMove*)move)-> value;
   for (int i=0; i< var_changee; i++)
@@ -90,7 +91,7 @@ void Nqueen::fullincr_update_conflicts(FullincrCSPConfiguration* configuration,M
    {
      if (configuration->config[var_changee]-(var_changee-i) >= 0)
        configuration->incr_conflicts(i,configuration->config[var_changee]-(var_changee -i),configuration->config[var_changee]-(var_changee -i),-1);
-     if (val_changee-(var_changee-i) >= 0)   
+     if (val_changee-(var_changee-i) >= 0)
        configuration->incr_conflicts(i,val_changee-(var_changee -i),val_changee-(var_changee -i),1);
      if (configuration->config[var_changee]+(var_changee-i) < nbvar)
        configuration->incr_conflicts(i,configuration->config[var_changee]+(var_changee -i),configuration->config[var_changee]+(var_changee -i),-1);
@@ -103,7 +104,7 @@ for (int i=var_changee+1; i< nbvar; i++)
 {
    if (configuration->config[var_changee]-(i-var_changee) >= 0)
        configuration->incr_conflicts(i,configuration->config[var_changee]-(i-var_changee),configuration->config[var_changee]-(i-var_changee),-1);
-     if (val_changee-(i-var_changee) >= 0)   
+     if (val_changee-(i-var_changee) >= 0)
        configuration->incr_conflicts(i,val_changee-(i-var_changee),val_changee-(i-var_changee),1);
      if (configuration->config[var_changee]+(i-var_changee) < nbvar)
        configuration->incr_conflicts(i,configuration->config[var_changee]+(i-var_changee),configuration->config[var_changee]+(i-var_changee),-1);
@@ -122,8 +123,8 @@ for (int i=var_changee+1; i< nbvar; i++)
 SwNqueen* swqueen_problem_creation (int nbvar)
 {
   int* dom = new int[nbvar];
-  
-  vector<int>* tabdom = new vector<int> [nbvar] ; // les differents types de domaines 
+
+  vector<int>* tabdom = new vector<int> [nbvar] ; // les differents types de domaines
   // Initialisation des structures de données des problèmes
   vector<int>* connex = new vector<int> [nbvar];
 
@@ -152,7 +153,7 @@ void SwNqueen :: random_configuration(Configuration* configuration)
  {int indice = (int) (drand48() * (nbvar -j));
  int jj =0; int val;
  for (list<int>::iterator it = not_used.begin(); it != not_used.end(); it++)
-   {if (jj == indice) 
+   {if (jj == indice)
      {val=*it; break;}
    jj++;}
  not_used.remove(val);
@@ -173,11 +174,11 @@ void SwNqueen::next_move
  else
    ((SwapMove*)move)->variable1 = random_variable(configuration);
  int var2 = (int) (drand48 () * (nbvar -1));
- if (var2 >= ((SwapMove*)move)->variable1) 
+ if (var2 >= ((SwapMove*)move)->variable1)
    var2++;
  ((SwapMove*)move)->variable2 = var2;
  move->valuation = move_evaluation (configuration,move);
- 
+
 }
 
 // cas full incremental
@@ -198,7 +199,7 @@ int SwNqueen::move_evaluation (Configuration* configuration,Move* move)
 
 
 void SwNqueen::move_execution(Configuration* configuration,Move* move)
-{OpProblem::move_execution(configuration,move); 
+{OpProblem::move_execution(configuration,move);
  int aval = configuration->config[((SwapMove*) move)->variable1];
 configuration->config[((SwapMove*) move)->variable1]=configuration->config[((SwapMove*) move)->variable2];
  configuration->config[((SwapMove*) move)->variable2]=aval;
@@ -206,7 +207,7 @@ configuration->config[((SwapMove*) move)->variable1]=configuration->config[((Swa
 
 
 void SwNqueen::fullincr_update_conflicts(FullincrCSPConfiguration* configuration,Move* move)
- 
+
 {int variable1 = ((SwapMove*)move)-> variable1;
   int variable2 = ((SwapMove*)move)-> variable2;
 CSPMove move1;
@@ -243,12 +244,12 @@ int SwNqueen::config_evaluation (Configuration* configuration)
 	 configuration->incr_conflicts(i,configuration->config[j] - (j -i),configuration->config[j] - (j -i),1);
        }
 
- return valeur;	 
- 
+ return valeur;
+
 }
 
 void SwNqueen::update_conflicts1(Configuration* configuration,Move* move)
- 
+
 {int var_changee = ((CSPMove*)move)-> variable;
   int val_changee = ((CSPMove*)move)-> value;
   for (int i=0; i< var_changee; i++)
@@ -256,7 +257,7 @@ void SwNqueen::update_conflicts1(Configuration* configuration,Move* move)
    {
      if (configuration->config[var_changee]-(var_changee-i) >= 0)
        configuration->incr_conflicts(i,configuration->config[var_changee]-(var_changee -i),configuration->config[var_changee]-(var_changee -i),-1);
-     if (val_changee-(var_changee-i) >= 0)   
+     if (val_changee-(var_changee-i) >= 0)
        configuration->incr_conflicts(i,val_changee-(var_changee -i),val_changee-(var_changee -i),1);
      if (configuration->config[var_changee]+(var_changee-i) < nbvar)
        configuration->incr_conflicts(i,configuration->config[var_changee]+(var_changee -i),configuration->config[var_changee]+(var_changee -i),-1);
@@ -267,7 +268,7 @@ for (int i=var_changee+1; i< nbvar; i++)
 {
    if (configuration->config[var_changee]-(i-var_changee) >= 0)
        configuration->incr_conflicts(i,configuration->config[var_changee]-(i-var_changee),configuration->config[var_changee]-(i-var_changee),-1);
-     if (val_changee-(i-var_changee) >= 0)   
+     if (val_changee-(i-var_changee) >= 0)
        configuration->incr_conflicts(i,val_changee-(i-var_changee),val_changee-(i-var_changee),1);
      if (configuration->config[var_changee]+(i-var_changee) < nbvar)
        configuration->incr_conflicts(i,configuration->config[var_changee]+(i-var_changee),configuration->config[var_changee]+(i-var_changee),-1);
@@ -317,8 +318,8 @@ return k;
 SwNiNqueen* swniqueen_problem_creation (int nbvar)
 {
 int* dom = new int[nbvar];
-  
-  vector<int>* tabdom = new vector<int> [nbvar] ; // les differents types de domaines 
+
+  vector<int>* tabdom = new vector<int> [nbvar] ; // les differents types de domaines
   // Initialisation des structures de données des problèmes
   vector<int>* connex = new vector<int> [nbvar];
 SwNiNqueen* problem = probleme_swnireines(nbvar);
@@ -362,7 +363,7 @@ int SwNiNqueen::move_evaluation (Configuration& configuration,int valeur,Move* m
 	  (abs (i - variable2) == abs (configuration.config[i] - configuration.config[variable1]))
 	valeur++;
       }
-    }     
+    }
   return valeur;
 }
 */
@@ -388,7 +389,7 @@ int SwNiNqueen::move_evaluation (Configuration* configuration,Move* move)
 	valeur--;
       if
 	  (i - variable1 == configuration->config[i] - configuration->config[variable2]
-|| 
+||
 	   i - variable1 ==  configuration->config[variable2] -configuration->config[i])
 	valeur++;
       if
@@ -397,7 +398,7 @@ int SwNiNqueen::move_evaluation (Configuration* configuration,Move* move)
 	   i - variable2 == configuration->config[variable1] - configuration->config[i]         )
 	valeur++;
       }
-    }     
+    }
   return valeur;
 }
 
@@ -415,11 +416,11 @@ int SwNiNqueen::config_evaluation (Configuration* configuration)
 	 {valeur++;
 	 }
        }
- return valeur;	 
- 
+ return valeur;
+
 }
 
- 
+
 
 void SwNiNqueen::adjust_parameters(Configuration* configuration, int& maxneighbors, int& minneighbors) {};
 

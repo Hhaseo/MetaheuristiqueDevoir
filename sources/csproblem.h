@@ -9,13 +9,13 @@ class CSProblem : public OpProblem
 
 /* tableau des domaines : chaque domaine est un vecteur d'entiers */
 /** domain array : each domain is implemented by a vector of integers */
-  vector<int>* tabdomains;  
+  std::vector<int>* tabdomains;
 /* pour chaque variable, numéro de son domaine : indice dans le tableau tabdomains */
 /** for each variable, domain number : index in tabdomains array */
   int* domains;
 /* tableau des connexions : pour chaque variable, vecteur des variables connectées */
 /** connections table : for each variable, vector of connected variables */
-  vector<int>* connections;
+  std::vector<int>* connections;
 /* constructeur de base */
 /** constructor */
   CSProblem (int nbvar, int nbconst);
@@ -37,7 +37,7 @@ class CSProblem : public OpProblem
 /** a value for variable var, randomly chosen in its domain, if possible distinct with val : returns the index of the value in the domain */
   virtual int random_value(int var,int val);
 /* une valeur dans le domaine de la variable minimisant les conflits avec la configuration */
-/** a value in the domain minimizing the conflict with the configuration (implementation of Minton min-conflict heuristics) 
+/** a value in the domain minimizing the conflict with the configuration (implementation of Minton min-conflict heuristics)
 returns the index of the value in the domain */
   virtual int min_conflict_value(int var,int val, Configuration * configuration);
 /* initialisation des domaines par défaut : un seul domaine numéro 0 pour toutes les variables */
@@ -56,10 +56,10 @@ returns the index of the value in the domain */
   Configuration* create_configuration();
   Move* create_move();
   void adjust_parameters(Configuration* configuration, int & maxneighbors, int & minneighbors);
-  void next_move(Configuration* configuration, Move* move, NeighborhoodSearch* nbhs);	
+  void next_move(Configuration* configuration, Move* move, NeighborhoodSearch* nbhs);
 /* met en place les domaines et connexions d'un problème */
 /** set the domains and connections of a problem */
-  virtual  void set_domains_connections( int* dom, vector<int>* tabledom, vector<int> * connect );
+  virtual  void set_domains_connections( int* dom, std::vector<int>* tabledom, std::vector<int> * connect );
 /* initialisation des domaines : appel de init_domains et init_tabdomains */
 /** initialization of the domains : call init_domains and init_tabdomains */
   virtual void init_domain_tabdomain();
@@ -70,11 +70,11 @@ returns the index of the value in the domain */
 
 
 /* CSP Binaires :  ajout du tableau des  contraintes à partir de 2 variables */
-/** Binary CSPs : addition of the constraints array */ 
+/** Binary CSPs : addition of the constraints array */
 class BinaryCSProblem : public CSProblem
 { public :
 /* pour une paire de variables (i,j) (i<j) , constraints[i][j] contient le numéro de contraintes +1 entre ces variables si
-elles sont connectées, 0 sinon. On se limite à au plus une contrainte par paire de variables : dans le 
+elles sont connectées, 0 sinon. On se limite à au plus une contrainte par paire de variables : dans le
 cas contraire on peut utiliser la classe  WeightExtensionBinaryCSP */
 /** for a couple (i,j) of variables, (i<j) , constraints[i][j] returns the constraint number + 1 if the variables are connected, 0 si the variables are not connected. It is assumed that at most one constraint exists between two variables
 (if not use WeightExtensionBinaryCSP class) */
