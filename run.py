@@ -20,6 +20,7 @@ KMAX = 1 #{11}
 TIME = 3600 #{12}
 #for MAXNEIGH in 50 #100 150 175 #do	
 
+os.system("make colorcsp -C sources"); 
 # run.py instance nbColor
 n=0 #{2}
 while (n <= NINSTANCES):
