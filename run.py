@@ -17,7 +17,7 @@ DIVE=0
 TEMP=0.5
 MAXNEIGH=50 #{7}
 KMAX = 1 #{11}
-TIME = 3 #{12}
+TIME = 5 #{12}
 #for MAXNEIGH in 50 #100 150 175 #do	
 
 os.system("make colorcsp -C sources"); 

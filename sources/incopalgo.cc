@@ -30,7 +30,6 @@ extern ofstream* ofile;  // le fichier de sortie
 
 BVNSAlgorithm::BVNSAlgorithm (int kmax, int maxTime) : kmax(kmax),maxTime(maxTime) 
 { 
-	time(&startTime);
 	movements.push_back(new PFlip(5)); // remove 
 	movements.push_back(new PFlip(5)); // remove 
 	movements.push_back(new PFlip(5)); // remove 
@@ -38,6 +37,8 @@ BVNSAlgorithm::BVNSAlgorithm (int kmax, int maxTime) : kmax(kmax),maxTime(maxTim
 };
 void BVNSAlgorithm::BVNSAlgorithm::run (OpProblem *problem, Configuration** s)
 {
+	time(&startTime);
+	walkalgo->nbhsearch->initsearch();
 	previous = problem->create_configuration();
 	previous->copy_element(*s);
 	do
@@ -56,14 +57,14 @@ void BVNSAlgorithm::BVNSAlgorithm::run (OpProblem *problem, Configuration** s)
 			{
 				(*s)->copy_element(previous);
 				i++;
-			}			
+			}
+			a++;			
 		} while (i < kmax);
 	} while ( difftime(time(&currTime),startTime) < maxTime);
-	
 	if (previous->valuation > ((*s))->valuation)
 	{
 		((*s))->copy_element(previous);
-	}		
+	}
 }
 
 /* --- ---- --- */
