@@ -13,6 +13,7 @@ using namespace std;
 #include <fstream>
 #include <math.h>
 #include <unistd.h>
+#include <iostream>
 
 #include "timer.h"
 #include "incop.h"
@@ -29,11 +30,17 @@ extern ofstream* ofile;  // le fichier de sortie
 
 BVNSAlgorithm::BVNSAlgorithm (int kmax, int maxTime) : kmax(kmax),maxTime(maxTime) 
 { 
+	printf("a");
 	time(&startTime);
+	printf("b");
+	movements.push_back(new PFlip(5)); // remove 
+	movements.push_back(new PFlip(5)); // remove 
+	movements.push_back(new PFlip(5)); // remove 
 	movements.push_back(new PFlip(5)); // remove 
 };
 void BVNSAlgorithm::BVNSAlgorithm::run (OpProblem *problem, Configuration* s)
 {
+	cout << "test" << endl;
 	previous = new Configuration(s->nbvar);
 	previous->copy_element(s);
 	do

@@ -300,7 +300,8 @@ void arguments_voisinage(char** argv,int& narg, int& taille_voisinage_min, int& 
 }
 
 void arguments_tabu(char** argv,int & narg, int& longtabu)
-{longtabu = argument2ul(argv[narg+1]," longueur liste taboue ");
+{cout << argv[narg+1] << endl;
+longtabu = argument2ul(argv[narg+1]," longueur liste taboue ");
  *ofile << " longueur liste taboue " << longtabu;
  narg= narg+1;
 }
@@ -418,8 +419,10 @@ LSAlgorithm* algo_marche (char** argv,int& narg,string& method, int gww)
   int nbmouv;
   double inittemp;
   double nbhr=0;  // defini pour grwrate
-  float Pd, P0; 
-  arguments_algorithme(argv,narg,nbmouv);
+  float Pd, P0;
+cout << "7" << endl; 
+  arguments_algorithme(argv,narg,nbmouv); // +1 arg
+cout << "8" << method << "-" << narg << endl;
   *ofile << " methode " << method << endl; 
   if (method == "metropolis")
     arguments_metropolis(argv,narg,temp);
@@ -434,7 +437,9 @@ LSAlgorithm* algo_marche (char** argv,int& narg,string& method, int gww)
   else if (method == "grwrate")
     arguments_grwrate (argv,narg,nbhr);
   *ofile << " arguments voisinage " << endl;
+cout << "tabudone "<< endl;
   arguments_voisinage(argv,narg,taille_voisinage_min,taille_voisinage_max,fin_voisinage,var_conflit,val_conflit,dynamic);
+	cout << "voisinage" << endl;
   if (gww)
     algo = new LSAlgorithmGWW (nbmouv);
   else 
@@ -475,6 +480,7 @@ LSAlgorithm* algo_marche (char** argv,int& narg,string& method, int gww)
  else if (method == "taburate") 
    mheuristic = new TabuAcceptingrate (longtabu, Pd, P0);
  algo->mheur = mheuristic;
+cout << "9"<<endl;
  return algo; 
 }
 
@@ -528,27 +534,38 @@ GWWAlgorithm* algo_gww(char** argv, int& narg, string& method , int& taille, lis
 
 void arguments_bvns(char** argv, int& narg, int& kmax, int& maxtime)
 {
-	kmax = argument2ul(argv[++narg], "kmax");
+	cout << "hey" << endl;
+	++narg;
+	kmax = argument2ul(argv[narg], "kmax");
 	*ofile << " kmax " << kmax << endl;
-	maxtime = argument2ul(argv[++narg], "maxtime");
+	++narg;
+	maxtime = argument2ul(argv[narg], "maxtime");
 	*ofile << " maxtime " << maxtime << endl;
 }
 
 
 BVNSAlgorithm* algo_vns(char** argv, int& narg, string& method , int& taille, list<string>& liste_methodes)
 {
+	cout << "start"<< endl;
 	// recuperer kmax et maxtime de argv
 	int kmax;
 	int maxTime;
-	arguments_bvns(argv,narg,kmax,maxTime);
 	
-	kmax = 4;
-	maxTime=3600;
+	//kmax = 1;
+	//maxTime=3600;
+	cout << "second" << endl;
+	cout << "third" << endl;
+	//narg après vns
+	arguments_gww_marche(argv,narg,method,liste_methodes); // narg est après tabu
+	cout << "outth" << endl;
+	LSAlgorithm* a = algo_marche(argv,narg,method,0);
+	cout << "6 " << method << endl;
+	
+	arguments_bvns(argv,narg,kmax,maxTime);
 	BVNSAlgorithm* algo = new BVNSAlgorithm(kmax,maxTime);
-	definir_liste_methodes(liste_methodes);
-	arguments_gww_marche(argv,narg,method,liste_methodes);
-	algo->walkalgo = algo_marche(argv,narg,method,0);
+	algo->walkalgo = a;
 	algo->walkalgo->methodname=method;
+	cout << "done vns " << kmax << " " << maxTime << endl;
 	return algo;
 }
 
@@ -565,8 +582,8 @@ IncompleteAlgorithm* algo_creation(char** argv, int& narg, int& taille, int& gra
   else {
 	  
 	  if (method=="vns") {
-		  //algo = algo_vns(argv,narg,method,taille,liste_methodes);
-		  printf("a implementer"); //TODO
+		  algo = algo_vns(argv,narg,method,taille,liste_methodes);
+		  //printf("a implementer"); //TODO
 		  }
 	else{ algo = algo_marche (argv,narg,method,0);
 		  taille=1;   }

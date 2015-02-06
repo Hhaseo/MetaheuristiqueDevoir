@@ -131,7 +131,7 @@ void ColorCSProblem::init_tabdomaines(int s)
 int colorcsp (int argc, char** argv, int tuningmode) {
 
   // les divers arguments lus dans la ligne de commande
-
+cout << "test" << endl;
   int nbcol,taille,nbessais;
   int graine1;
 
@@ -152,12 +152,12 @@ int colorcsp (int argc, char** argv, int tuningmode) {
 
   // lecture des paramètres de l'algo et création de l'objet algo
   IncompleteAlgorithm* algo = algo_creation (argv, narg, taille, graine1, nbessais);
-
+  
   // allocation de l'objet pour les stats
   Statistiques=new Stat_GWW (1, nbessais);
-  
   // argument pour la trace
   arguments_tracemode(argv,narg);
+  
   // pour la récupération du signal 10
   sigaction();
  // argument de temps maximum 
@@ -169,13 +169,17 @@ int colorcsp (int argc, char** argv, int tuningmode) {
 
   // creation de la population et initialisation 
   // La population : tableau de configurations
+  cout << "p0" << taille << endl;
   Configuration* population[taille];
+  cout << "p1" << endl;
   problem->init_population(population,taille);
+  cout << "p2" << endl;
   problem->allocate_moves();
 
+  cout << "i" << endl;
   // initialisation des statistiques
   Statistiques->init_pb(0);
- 
+cout << "im here" <<endl; 
   if (tuningmode)
     // lancement reglage + essais
     autosolving((LSAlgorithm*)algo,population,problem,0,graine1,nbessais,maxtime,1000000);
