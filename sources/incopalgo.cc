@@ -36,34 +36,33 @@ BVNSAlgorithm::BVNSAlgorithm (int kmax, int maxTime) : kmax(kmax),maxTime(maxTim
 	movements.push_back(new PFlip(5)); // remove 
 	movements.push_back(new PFlip(5)); // remove 
 };
-void BVNSAlgorithm::BVNSAlgorithm::run (OpProblem *problem, Configuration* s)
+void BVNSAlgorithm::BVNSAlgorithm::run (OpProblem *problem, Configuration** s)
 {
-	previous = new Configuration(s->nbvar);
-	previous->copy_element(s);
+	previous = problem->create_configuration();
+	previous->copy_element(*s);
 	do
 	{
 		int i=0;
 		do
 		{			
-			movements[i]->shake(problem,s);
-			walkalgo->randomwalk(problem,s);
-			
-			if (previous->valuation < s->valuation)
+			movements[i]->shake(problem,(*s));
+			walkalgo->randomwalk(problem,(*s));
+			if (previous->valuation < (*s)->valuation)
 			{
-				previous->copy_element(s);
+				previous->copy_element((*s));
 				i = 0;
 			}
 			else
 			{
-				s->copy_element(previous);
+				(*s)->copy_element(previous);
 				i++;
 			}			
 		} while (i < kmax);
-	} while ( difftime(startTime,time(&currTime)) < maxTime);
+	} while ( difftime(time(&currTime),startTime) < maxTime);
 	
-	if (previous->valuation > s->valuation)
+	if (previous->valuation > ((*s))->valuation)
 	{
-		s->copy_element(previous);
+		((*s))->copy_element(previous);
 	}		
 }
 

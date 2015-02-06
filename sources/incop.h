@@ -404,6 +404,7 @@ class BVNSAlgorithm : public IncompleteAlgorithm
 		time_t startTime;
 		time_t currTime;
 		Configuration* previous;
+		//~ Configuration* s;
 		LSAlgorithm* walkalgo;
 		std::vector<AbstractNeighborStructure*> movements;
 
@@ -419,7 +420,7 @@ class BVNSAlgorithm : public IncompleteAlgorithm
 
 		};
 
-		void run (OpProblem *problem,Configuration * initSolution);
+		void run (OpProblem *problem,Configuration** initSolution);
 		/** walk for a particule */
 		/*void randomwalk (OpProblem* problem, Configuration* configuration);
 		void initthreshold(Configuration** population, int popsize);
