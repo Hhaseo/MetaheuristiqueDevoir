@@ -30,9 +30,7 @@ extern ofstream* ofile;  // le fichier de sortie
 
 BVNSAlgorithm::BVNSAlgorithm (int kmax, int maxTime) : kmax(kmax),maxTime(maxTime) 
 { 
-	printf("a");
 	time(&startTime);
-	printf("b");
 	movements.push_back(new PFlip(5)); // remove 
 	movements.push_back(new PFlip(5)); // remove 
 	movements.push_back(new PFlip(5)); // remove 
@@ -40,7 +38,6 @@ BVNSAlgorithm::BVNSAlgorithm (int kmax, int maxTime) : kmax(kmax),maxTime(maxTim
 };
 void BVNSAlgorithm::BVNSAlgorithm::run (OpProblem *problem, Configuration* s)
 {
-	cout << "test" << endl;
 	previous = new Configuration(s->nbvar);
 	previous->copy_element(s);
 	do
@@ -69,37 +66,6 @@ void BVNSAlgorithm::BVNSAlgorithm::run (OpProblem *problem, Configuration* s)
 		s->copy_element(previous);
 	}		
 }
-/*
-int BVNSAlgorithm::BVNSAlgorithm::neighborhoodChange(Configuration* s, Configuration* t, int i)
-{
-	if (t->valuation < s->valuation)
-	{
-		//*s = *t;
-		//ou?
-		s = t;
-		return 1;
-	}
-	return i+1;
-}
-
-void BVNSAlgorithm::randomwalk (OpProblem* problem, Configuration* configuration)
-{
-}
-void BVNSAlgorithm::initthreshold(Configuration** population, int popsize)
-{
-}
-
-Configuration* BVNSAlgorithm::shake(Configuration* s,int i)
-{
-	previous->copy_element(s);
-//	problem->next_move(s,(*movements[i]),nbhsearch);	
-	return s;
-}
-Configuration* BVNSAlgorithm::firstImprovement(OpProblem problem,Configuration* s)
-{
-	walkalgo->randomwalk(problem,s);
-	return s;
-}*/
 
 /* --- ---- --- */
 

@@ -131,7 +131,6 @@ void ColorCSProblem::init_tabdomaines(int s)
 int colorcsp (int argc, char** argv, int tuningmode) {
 
   // les divers arguments lus dans la ligne de commande
-cout << "test" << endl;
   int nbcol,taille,nbessais;
   int graine1;
 
@@ -169,17 +168,12 @@ cout << "test" << endl;
 
   // creation de la population et initialisation 
   // La population : tableau de configurations
-  cout << "p0" << taille << endl;
   Configuration* population[taille];
-  cout << "p1" << endl;
   problem->init_population(population,taille);
-  cout << "p2" << endl;
   problem->allocate_moves();
 
-  cout << "i" << endl;
   // initialisation des statistiques
   Statistiques->init_pb(0);
-cout << "im here" <<endl; 
   if (tuningmode)
     // lancement reglage + essais
     autosolving((LSAlgorithm*)algo,population,problem,0,graine1,nbessais,maxtime,1000000);
