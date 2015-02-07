@@ -52,12 +52,14 @@ void BVNSAlgorithm::BVNSAlgorithm::run (OpProblem *problem, Configuration** s)
 			movements[i]->shake(problem,(*s));
 			Statistiques->nb_moves[Statistiques->current_try]++;
 			problem->compute_var_conflict(*s);
-			//walkalgo->randomwalk(problem,(*s));
-			walkalgo->configurationmove(problem,(*s));
-			Statistiques->nb_moves[Statistiques->current_try]++;
+			walkalgo->randomwalk(problem,(*s));
+//			walkalgo->configurationmove(problem,(*s));
+//			Statistiques->nb_moves[Statistiques->current_try]++;
 			problem->compute_var_conflict(*s);
+//			cout << (*s)->valuation << " " << problem->config_evaluation(*s) << (*s)->valuation << problem->config_evaluation(previous) << endl;
 //			(*s)->valuation = problem->config_evaluation(*s);
-			if (previous->var_conflict.size() < (*s)->var_conflict.size())
+			if (previous->valuation < (*s)->valuation)
+//			if (previous->var_conflict.size() < (*s)->var_conflict.size())
 			{
 				previous->copy_element((*s));
 				i = 0;
@@ -71,12 +73,13 @@ void BVNSAlgorithm::BVNSAlgorithm::run (OpProblem *problem, Configuration** s)
 			problem->compute_var_conflict(previous);
 		} while (i < kmax);
 	} while ( difftime(time(&currTime),startTime) < maxTime);
-	if (previous->var_conflict.size() > ((*s))->var_conflict.size())
+	if (previous->valuation > (*s)->valuation);
+//	if (previous->var_conflict.size() > ((*s))->var_conflict.size())
 	{
 		((*s))->copy_element(previous);
 	}
 	problem->compute_var_conflict(*s);
-	(*s)->valuation = (*s)->var_conflict.size();
+//	(*s)->valuation = (*s)->var_conflict.size();
 }
 
 /* --- ---- --- */
@@ -90,7 +93,8 @@ Configuration* PFlip::shake(OpProblem* problem, Configuration* s)
 	for (i=0; i < s->var_conflict_size && i < p; i++)
 	{
 		CSPMove* m = (CSPMove*)problem->create_move();
-		m->variable = s->var_conflict[i];//((CSProblem*)problem)->random_variable(s);
+//		m->variable = s->var_conflict[i];//((CSProblem*)problem)->random_variable(s);
+		m->variable = ((CSProblem*)problem)->random_variable(s);
 		m->value = ((CSProblem*)problem)->random_value(m->variable,s->config[m->variable]);
 		s->update_conflicts(problem,m);
 		s->valuation = problem->config_evaluation(s);
