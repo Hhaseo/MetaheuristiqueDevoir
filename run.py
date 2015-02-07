@@ -4,9 +4,9 @@ import sys
 
 # Made for Guillaume Desquesnes & Florian Benavent homework of Metaheuristique based on Mr. Loudni script.
 
-NINSTANCES= 0#1 #20
+NINSTANCES= 1 #20
 MAXTABU=1500000 #{4} -> nbmouv
-NB= 2#5#NB=20 #{3}
+NB= 2#NB=20 #{3}
 NEXTNEIGH=1 #{8} -> fin voisinage ?
 DYNNEIGH=1 #{9}
 MINNEIGH=1 #{6}
@@ -16,7 +16,7 @@ SEED=0
 DIVE=0
 TEMP=0.5
 MAXNEIGH=50 #{7}
-KMAX = 1 #{11}
+KMAX = 2 #{11}
 TIME = 30 #{12}
 #for MAXNEIGH in 50 #100 150 175 #do	
 

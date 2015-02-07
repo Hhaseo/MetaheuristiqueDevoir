@@ -30,10 +30,10 @@ extern ofstream* ofile;  // le fichier de sortie
 
 BVNSAlgorithm::BVNSAlgorithm (int kmax, int maxTime) : kmax(kmax),maxTime(maxTime) 
 { 
-	movements.push_back(new PFlip(5)); // remove 
-	movements.push_back(new PFlip(5)); // remove 
-	movements.push_back(new PFlip(5)); // remove 
-	movements.push_back(new PFlip(5)); // remove 
+	movements.push_back(new PFlip(5)); // 
+	movements.push_back(new Swap()); // 
+	movements.push_back(new TwoExchange()); //  
+	movements.push_back(new KempeChain()); //  
 };
 void BVNSAlgorithm::BVNSAlgorithm::run (OpProblem *problem, Configuration** s)
 {
@@ -79,7 +79,6 @@ void BVNSAlgorithm::BVNSAlgorithm::run (OpProblem *problem, Configuration** s)
 		((*s))->copy_element(previous);
 	}
 	problem->compute_var_conflict(*s);
-//	(*s)->valuation = (*s)->var_conflict.size();
 }
 
 /* --- ---- --- */
@@ -96,7 +95,9 @@ Configuration* PFlip::shake(OpProblem* problem, Configuration* s)
 //		m->variable = s->var_conflict[i];//((CSProblem*)problem)->random_variable(s);
 		m->variable = ((CSProblem*)problem)->random_variable(s);
 		m->value = ((CSProblem*)problem)->random_value(m->variable,s->config[m->variable]);
-		s->update_conflicts(problem,m);
+		m->valuation = ((CSProblem*)problem)->move_evaluation(s,m);
+//		s->update_conflicts(problem,m);
+		problem->move_execution(s,m);
 		s->valuation = problem->config_evaluation(s);
 	}
 	
@@ -104,10 +105,44 @@ Configuration* PFlip::shake(OpProblem* problem, Configuration* s)
 	return s;
 }
 
-Configuration* PFlip::firstImprovement(OpProblem* problem, Configuration* s)
+Configuration* Swap::shake(OpProblem* problem, Configuration *s)
+{
+	// test if var1 = var2;
+	// use conflicts var
+	int var1 = ((CSProblem*)problem)->random_variable(s);
+	int var2 = ((CSProblem*)problem)->random_variable(s);
+	CSPMove* m1 = (CSPMove*)problem->create_move();
+	CSPMove* m2 = (CSPMove*)problem->create_move();
+	m1->variable = var1;
+	m2->variable = var2;
+	m1->value = s->config[var2];
+	m2->value = s->config[var1];
+	m1->valuation = ((CSProblem*)problem)->move_evaluation(s,m1);
+//	cout << s->valuation <<  "&" << m1->valuation << " ";
+	problem->move_execution(s,m1);
+	m2->valuation = ((CSProblem*)problem)->move_evaluation(s,m2);
+//	cout << m2->valuation << endl;
+	problem->move_execution(s,m2);
+	s->valuation = problem->config_evaluation(s);
+	return s;
+}
+
+Configuration* TwoExchange::shake(OpProblem* problem, Configuration *s)
 {
 	return s;
 }
+
+Configuration* KempeChain::shake(OpProblem* problem, Configuration *s)
+{
+	return s;
+}
+
+
+
+/*Configuration* PFlip::firstImprovement(OpProblem* problem, Configuration* s)
+{
+	return s;
+}*/
 
 /* --- ------------- --- */
 

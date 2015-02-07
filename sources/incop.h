@@ -380,7 +380,7 @@ class AbstractNeighborStructure
 {
 	public:
 		virtual Configuration* shake(OpProblem* problem, Configuration* s)=0;
-		virtual Configuration* firstImprovement(OpProblem* problem, Configuration* s)=0;
+//		virtual Configuration* firstImprovement(OpProblem* problem, Configuration* s)=0;
 
 };
 
@@ -390,7 +390,29 @@ class PFlip : public AbstractNeighborStructure
 		int p;
 		PFlip(int p) : p(p){};
 		Configuration* shake(OpProblem* problem, Configuration* s);
-		Configuration* firstImprovement(OpProblem* problem, Configuration* s);
+//		Configuration* firstImprovement(OpProblem* problem, Configuration* s);
+};
+
+class Swap : public AbstractNeighborStructure
+{
+	public:
+		Swap() {};
+		Configuration* shake(OpProblem* problem,Configuration* s);
+//		Configuration* firstImprovement(OpProblem* problem, Configuration* s){return s;};
+};
+
+class TwoExchange : public AbstractNeighborStructure
+{
+	public:
+		TwoExchange() {};
+		Configuration* shake(OpProblem* problem, Configuration* s);
+};
+
+class KempeChain : public AbstractNeighborStructure
+{
+	public:
+		KempeChain() {};
+		Configuration* shake(OpProblem* problem, Configuration* s);
 };
 
 /* ----------------------------------------------------------------- */
