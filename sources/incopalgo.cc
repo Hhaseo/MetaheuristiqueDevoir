@@ -39,16 +39,25 @@ void BVNSAlgorithm::BVNSAlgorithm::run (OpProblem *problem, Configuration** s)
 {
 	time(&startTime);
 	walkalgo->nbhsearch->initsearch();
+	problem->compute_var_conflict(*s);
+	//cout << (*s)->var_conflict_size << " " << (*s)->var_conflict.size() << endl;
 	previous = problem->create_configuration();
 	previous->copy_element(*s);
+	problem->compute_var_conflict(previous);
 	do
 	{
 		int i=0;
 		do
 		{			
 			movements[i]->shake(problem,(*s));
-			walkalgo->randomwalk(problem,(*s));
-			if (previous->valuation < (*s)->valuation)
+			Statistiques->nb_moves[Statistiques->current_try]++;
+			problem->compute_var_conflict(*s);
+			//walkalgo->randomwalk(problem,(*s));
+			walkalgo->configurationmove(problem,(*s));
+			Statistiques->nb_moves[Statistiques->current_try]++;
+			problem->compute_var_conflict(*s);
+//			(*s)->valuation = problem->config_evaluation(*s);
+			if (previous->var_conflict.size() < (*s)->var_conflict.size())
 			{
 				previous->copy_element((*s));
 				i = 0;
@@ -58,13 +67,16 @@ void BVNSAlgorithm::BVNSAlgorithm::run (OpProblem *problem, Configuration** s)
 				(*s)->copy_element(previous);
 				i++;
 			}
-			a++;			
+			problem->compute_var_conflict(*s);
+			problem->compute_var_conflict(previous);
 		} while (i < kmax);
 	} while ( difftime(time(&currTime),startTime) < maxTime);
-	if (previous->valuation > ((*s))->valuation)
+	if (previous->var_conflict.size() > ((*s))->var_conflict.size())
 	{
 		((*s))->copy_element(previous);
 	}
+	problem->compute_var_conflict(*s);
+	(*s)->valuation = (*s)->var_conflict.size();
 }
 
 /* --- ---- --- */
@@ -81,6 +93,7 @@ Configuration* PFlip::shake(OpProblem* problem, Configuration* s)
 		m->variable = s->var_conflict[i];//((CSProblem*)problem)->random_variable(s);
 		m->value = ((CSProblem*)problem)->random_value(m->variable,s->config[m->variable]);
 		s->update_conflicts(problem,m);
+		s->valuation = problem->config_evaluation(s);
 	}
 	
 	// if i < p que faire ?

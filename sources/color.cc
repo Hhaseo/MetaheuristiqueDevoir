@@ -424,10 +424,12 @@ configuration->var_conflict_size=0;
 
 // méthode redéfinie pour raison d'efficacité avec Configuration FullIncr
 void ColorCSProblem::compute_var_conflict(Configuration* configuration) 
-{configuration->var_conflict.clear();
+{configuration->var_conflict_size = 0;
+configuration->var_conflict.clear();
  for (int i=0;i<nbvar;i++)
    if (((FullincrCSPConfiguration*)configuration)->tabconflicts[i][configuration->config[i]])
      configuration->var_conflict.push_back(i);
+	configuration->var_conflict_size++;
 
 }
 
