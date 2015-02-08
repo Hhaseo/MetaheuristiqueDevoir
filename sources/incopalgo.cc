@@ -8,6 +8,8 @@
 #include <string>
 #include <set>
 #include <algorithm>
+#include <stack>
+#include <random>
 
 using namespace std;
 #include <fstream>
@@ -71,8 +73,8 @@ void BVNSAlgorithm::BVNSAlgorithm::run (OpProblem *problem, Configuration** s)
 			}
 			problem->compute_var_conflict(*s);
 			problem->compute_var_conflict(previous);
-		} while (i < kmax);
-	} while ( difftime(time(&currTime),startTime) < maxTime);
+		} while (i < kmax && (*s)->valuation!=0);
+	} while ( difftime(time(&currTime),startTime) < maxTime && (*s)->valuation!=0);
 	if (previous->valuation > (*s)->valuation);
 //	if (previous->var_conflict.size() > ((*s))->var_conflict.size())
 	{
@@ -105,35 +107,80 @@ Configuration* PFlip::shake(OpProblem* problem, Configuration* s)
 	return s;
 }
 
-Configuration* Swap::shake(OpProblem* problem, Configuration *s)
+Configuration* TwoExchange::shake(OpProblem* problem, Configuration *s)
 {
 	// test if var1 = var2;
-	// use conflicts var
-	int var1 = ((CSProblem*)problem)->random_variable(s);
-	int var2 = ((CSProblem*)problem)->random_variable(s);
+	CSProblem* p = (CSProblem*)problem;
+	int var1 = p->random_conflict_variable(s);
+	int var2 = p->random_variable(s);
 	CSPMove* m1 = (CSPMove*)problem->create_move();
 	CSPMove* m2 = (CSPMove*)problem->create_move();
 	m1->variable = var1;
 	m2->variable = var2;
 	m1->value = s->config[var2];
 	m2->value = s->config[var1];
-	m1->valuation = ((CSProblem*)problem)->move_evaluation(s,m1);
-//	cout << s->valuation <<  "&" << m1->valuation << " ";
+	m1->valuation = p->move_evaluation(s,m1);
 	problem->move_execution(s,m1);
-	m2->valuation = ((CSProblem*)problem)->move_evaluation(s,m2);
-//	cout << m2->valuation << endl;
+	m2->valuation = p->move_evaluation(s,m2);
 	problem->move_execution(s,m2);
 	s->valuation = problem->config_evaluation(s);
 	return s;
 }
 
-Configuration* TwoExchange::shake(OpProblem* problem, Configuration *s)
+Configuration* Swap::shake(OpProblem* problem, Configuration *s)
 {
+	CSProblem* p = (CSProblem*) problem;
+	int var1 = p->random_conflict_variable(s);
+	int var2 = (var1 == s->nbvar-1) ? var1-1 : var1+1;
+
+	CSPMove* m1 = (CSPMove*) problem->create_move();
+	CSPMove* m2 = (CSPMove*) problem->create_move();
+	m1->variable = var1;
+	m2->variable = var2;
+	m1->value = s->config[var2];
+	m2->value = s->config[var1];
+	m1->valuation = p->move_evaluation(s,m1);
+	problem->move_execution(s,m1);
+	m2->valuation = p->move_evaluation(s,m2);
+	problem->move_execution(s,m2);
+	s->valuation = problem->config_evaluation(s);
 	return s;
 }
 
 Configuration* KempeChain::shake(OpProblem* problem, Configuration *s)
 {
+	CSProblem* p = ((CSProblem*)s);
+	int varStart = p->random_variable(s);
+	int col1 = s->config[varStart];
+	int col2 = s->config[p->connections[varStart][rand()%p->connections->size()]];
+	stack<int> chain;
+	stack<int> openlist;
+	openlist.push(varStart);
+	while (!openlist.empty())
+	{
+		int v = openlist.top();
+		chain.push(v);
+		for (vector<int>::iterator it=p->connections[v].begin(); it !=p->connections[v].end(); ++it)
+		{
+			int col = s->config[*it];
+			if (col == col1 || col == col2)
+			{
+				openlist.push(*it);
+			}
+		}
+		openlist.pop();
+	}
+
+	while (!chain.empty())
+	{
+		CSPMove* m = (CSPMove*) p->create_move();
+		m->variable = chain.top();
+		m->value = (s->config[m->variable] == col1) ? col2 : col1;
+		m->valuation = p->move_evaluation(s,m);
+		p->move_execution(s,m);
+		chain.pop();
+	}
+	s->valuation = p->config_evaluation(s);
 	return s;
 }
 
