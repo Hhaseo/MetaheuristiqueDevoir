@@ -21,6 +21,7 @@ using namespace std;
 #include "timer.h"
 #include "incop.h"
 #include "incoputil.h"
+#include "basicvns.h"
 
 
 

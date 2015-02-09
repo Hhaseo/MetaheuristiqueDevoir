@@ -82,10 +82,14 @@ color.o:		color.cc color.h  incop.h makefile
 colormain.o: 		colormain.cc incop.h color.h makefile
 	$(CCC) -c $(CFLAGS)  -o colormain.o colormain.cc
 
-colorcsp:		incopalgo.o  color.o timer.o csproblem.o incoputil.o colormain.o autotuning2.o 
-	$(CCC) $(CFLAGS) $(LDFLAGS) incopalgo.o  color.o  timer.o csproblem.o colormain.o incoputil.o autotuning2.o -o colorcsp $(LDFLAGS)
+colorcsp:		incopalgo.o  color.o timer.o csproblem.o incoputil.o colormain.o autotuning2.o basicvns.o
+	$(CCC) $(CFLAGS) $(LDFLAGS) incopalgo.o  color.o  timer.o csproblem.o colormain.o incoputil.o autotuning2.o basicvns.o -o colorcsp $(LDFLAGS)
 
 #Compilation of Basic VNS By Florian Benavent and Guillaume Dequesnes
+basicvns.o : 
+	$(CCC) -c $(CFLAGS) -o basicvns.o basicvns.cc
+
+# ---------------------------------------------------
 
 impassemain.o: 		impassemain.cc incop.h color.h makefile
 	$(CCC) -c $(CFLAGS)  -o impassemain.o impassemain.cc
