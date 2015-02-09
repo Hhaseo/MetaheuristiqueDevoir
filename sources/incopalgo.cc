@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <set>
+#include <map>
 #include <algorithm>
 #include <stack>
 #include <random>
@@ -51,6 +52,7 @@ void BVNSAlgorithm::BVNSAlgorithm::run (OpProblem *problem, Configuration** s)
 		int i=0;
 		do
 		{			
+			cout << i << kmax << endl;
 			movements[i]->shake(problem,(*s));
 			Statistiques->nb_moves[Statistiques->current_try]++;
 			problem->compute_var_conflict(*s);
@@ -149,37 +151,43 @@ Configuration* Swap::shake(OpProblem* problem, Configuration *s)
 
 Configuration* KempeChain::shake(OpProblem* problem, Configuration *s)
 {
-	CSProblem* p = ((CSProblem*)s);
+	CSProblem* p = ((CSProblem*)problem);
 	int varStart = p->random_variable(s);
 	int col1 = s->config[varStart];
 	int col2 = s->config[p->connections[varStart][rand()%p->connections->size()]];
-	stack<int> chain;
+	map<int,int> chain;
 	stack<int> openlist;
 	openlist.push(varStart);
+	cout << "kempechain start" << endl;
 	while (!openlist.empty())
 	{
 		int v = openlist.top();
-		chain.push(v);
+		//cout << v << endl;
+		//chain.push_back(v);
+		chain[v] = v;
 		for (vector<int>::iterator it=p->connections[v].begin(); it !=p->connections[v].end(); ++it)
 		{
 			int col = s->config[*it];
-			if (col == col1 || col == col2)
+			if ((col == col1 || col == col2) && (chain.find(v)==chain.end()))
 			{
 				openlist.push(*it);
 			}
 		}
 		openlist.pop();
 	}
+	cout << "chainbuild" << endl;
 
-	while (!chain.empty())
+//	while (!chain.empty())
+	for (auto it=chain.begin(); it!=chain.end();++it)
 	{
 		CSPMove* m = (CSPMove*) p->create_move();
-		m->variable = chain.top();
+		m->variable = it->first;
 		m->value = (s->config[m->variable] == col1) ? col2 : col1;
 		m->valuation = p->move_evaluation(s,m);
 		p->move_execution(s,m);
-		chain.pop();
+//		chain.pop_back();
 	}
+	cout << "done" << endl;
 	s->valuation = p->config_evaluation(s);
 	return s;
 }
