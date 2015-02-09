@@ -16,7 +16,7 @@ SEED=0
 DIVE=0
 TEMP=0.5
 MAXNEIGH=50 #{7}
-KMAX = 2 #{11}
+KMAX = 4 #{11}
 TIME = 30 #{12}
 #for MAXNEIGH in 50 #100 150 175 #do	
 

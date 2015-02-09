@@ -50,33 +50,37 @@ void BVNSAlgorithm::BVNSAlgorithm::run (OpProblem *problem, Configuration** s)
 	{
 		int i=0;
 		do
-		{			
+		{	
 			movements[i]->shake(problem,(*s));
 			Statistiques->nb_moves[Statistiques->current_try]++;
 			problem->compute_var_conflict(*s);
 			walkalgo->randomwalk(problem,(*s));
 //			walkalgo->configurationmove(problem,(*s));
-//			Statistiques->nb_moves[Statistiques->current_try]++;
+//			Statistiques->nb_moves[Statistiques->current_try]++;	
 			problem->compute_var_conflict(*s);
 //			cout << (*s)->valuation << " " << problem->config_evaluation(*s) << (*s)->valuation << problem->config_evaluation(previous) << endl;
 //			(*s)->valuation = problem->config_evaluation(*s);
-			if (previous->valuation < (*s)->valuation)
-//			if (previous->var_conflict.size() < (*s)->var_conflict.size())
+//F			if (previous->valuation < (*s)->valuation)
+			if (previous->var_conflict.size() < (*s)->var_conflict.size())
 			{
-				previous->copy_element((*s));
+				(*s)->copy_element(previous);
 				i = 0;
 			}
 			else
 			{
-				(*s)->copy_element(previous);
+				previous->copy_element((*s));
 				i++;
 			}
 			problem->compute_var_conflict(*s);
 			problem->compute_var_conflict(previous);
-		} while (i < kmax && (*s)->valuation!=0);
-	} while ( difftime(time(&currTime),startTime) < maxTime && (*s)->valuation!=0);
-	if (previous->valuation > (*s)->valuation);
-//	if (previous->var_conflict.size() > ((*s))->var_conflict.size())
+cout << "\n --------- Fin Boucle interieur --------- " << endl;
+			cout << "Nombre de conflit restant = " << (*s)->var_conflict.size() << std::endl;
+			cout << "Mouvement : i / kmax = " << i << "/" << kmax << std::endl;
+			cout << "Time Diff(currTime, startTime) / maxTime = " << difftime(time(&currTime),startTime) << " / " << maxTime << std::endl;
+		} while (i < kmax && (*s)->var_conflict.size()!=0);
+	} while ( difftime(time(&currTime),startTime) < maxTime && (*s)->var_conflict.size()!=0);
+//	if (previous->valuation > (*s)->valuation);
+	if (previous->var_conflict.size() > ((*s))->var_conflict.size())
 	{
 		((*s))->copy_element(previous);
 	}
@@ -91,7 +95,7 @@ Configuration* PFlip::shake(OpProblem* problem, Configuration* s)
 {
 	// pas fliper deux fois la meme variable
 	int i;
-	for (i=0; i < s->var_conflict_size && i < p; i++)
+	for (i=0; i < s->var_conflict.size() && i < p; i++)
 	{
 		CSPMove* m = (CSPMove*)problem->create_move();
 //		m->variable = s->var_conflict[i];//((CSProblem*)problem)->random_variable(s);
@@ -109,10 +113,15 @@ Configuration* PFlip::shake(OpProblem* problem, Configuration* s)
 
 Configuration* TwoExchange::shake(OpProblem* problem, Configuration *s)
 {
-	// test if var1 = var2;
+	if (s->var_conflict.size() <= 0)
+		return NULL;
 	CSProblem* p = (CSProblem*)problem;
 	int var1 = p->random_conflict_variable(s);
 	int var2 = p->random_variable(s);
+	// test if var1 = var2;
+	while (var2 == var1)
+		p->random_variable(s);
+
 	CSPMove* m1 = (CSPMove*)problem->create_move();
 	CSPMove* m2 = (CSPMove*)problem->create_move();
 	m1->variable = var1;
@@ -129,6 +138,8 @@ Configuration* TwoExchange::shake(OpProblem* problem, Configuration *s)
 
 Configuration* Swap::shake(OpProblem* problem, Configuration *s)
 {
+	if (s->var_conflict.size() <= 0)
+		return NULL;
 	CSProblem* p = (CSProblem*) problem;
 	int var1 = p->random_conflict_variable(s);
 	int var2 = (var1 == s->nbvar-1) ? var1-1 : var1+1;
@@ -149,7 +160,7 @@ Configuration* Swap::shake(OpProblem* problem, Configuration *s)
 
 Configuration* KempeChain::shake(OpProblem* problem, Configuration *s)
 {
-	CSProblem* p = ((CSProblem*)s);
+	CSProblem* p = dynamic_cast<CSProblem*>(problem);
 	int varStart = p->random_variable(s);
 	int col1 = s->config[varStart];
 	int col2 = s->config[p->connections[varStart][rand()%p->connections->size()]];
