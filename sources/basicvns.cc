@@ -89,23 +89,21 @@ void BVNSAlgorithm::BVNSAlgorithm::run (OpProblem *problem, Configuration** s)
 
 Configuration* PFlip::shake(OpProblem* problem, Configuration* s)
 {
-	// pas fliper deux fois la meme variable
 	if (s->var_conflict.size() <= 0)
 		return NULL;
 	int i;
-	for (i=0; i < s->var_conflict.size() && i < p; i++)
+	for (i=0; i<p && s->var_conflict.size() >0; i++)
 	{
+		
 		CSPMove* m = (CSPMove*)problem->create_move();
-//		m->variable = s->var_conflict[i];//((CSProblem*)problem)->random_variable(s);
-		m->variable = ((CSProblem*)problem)->random_variable(s);
+//		m->variable = ((CSProblem*)problem)->random_variable(s);
+		m->variable = ((CSProblem*)problem)->random_conflict_variable(s);
+
 		m->value = ((CSProblem*)problem)->random_value(m->variable,s->config[m->variable]);
 		m->valuation = ((CSProblem*)problem)->move_evaluation(s,m);
-//		s->update_conflicts(problem,m);
 		problem->move_execution(s,m);
 		s->valuation = problem->config_evaluation(s);
 	}
-	
-	// if i < p que faire ?
 	return s;
 }
 
@@ -208,7 +206,3 @@ Configuration* KempeChain::shake(OpProblem* problem, Configuration *s)
 
 
 
-/*Configuration* PFlip::firstImprovement(OpProblem* problem, Configuration* s)
-{
-	return s;
-}*/

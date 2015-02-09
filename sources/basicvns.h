@@ -11,7 +11,6 @@ class AbstractNeighborStructure
 {
 	public:
 		virtual Configuration* shake(OpProblem* problem, Configuration* s)=0;
-//		virtual Configuration* firstImprovement(OpProblem* problem, Configuration* s)=0;
 
 };
 
@@ -21,7 +20,6 @@ class PFlip : public AbstractNeighborStructure
 		int p;
 		PFlip(int p) : p(p){};
 		Configuration* shake(OpProblem* problem, Configuration* s);
-//		Configuration* firstImprovement(OpProblem* problem, Configuration* s);
 };
 
 class Swap : public AbstractNeighborStructure
@@ -29,7 +27,6 @@ class Swap : public AbstractNeighborStructure
 	public:
 		Swap() {};
 		Configuration* shake(OpProblem* problem,Configuration* s);
-//		Configuration* firstImprovement(OpProblem* problem, Configuration* s){return s;};
 };
 
 class TwoExchange : public AbstractNeighborStructure
@@ -59,14 +56,11 @@ class BVNSAlgorithm : public IncompleteAlgorithm
 		// Start time of the BVNS ALgorithm
 		time_t startTime;
 		// Current TIme of the system
-		time_t currTime;
 		Configuration* previous;
-		//~ Configuration* s;
 		LSAlgorithm* walkalgo;
 		// List Of Movement
 		std::vector<AbstractNeighborStructure*> movements;
 
-		NeighborhoodSearch* nbhsearch;
 		BVNSAlgorithm(int k, int maxTime);
 		~BVNSAlgorithm()
 		{
@@ -79,12 +73,6 @@ class BVNSAlgorithm : public IncompleteAlgorithm
 		};
 
 		void run (OpProblem *problem,Configuration** initSolution);
-		/** walk for a particule */
-		/*void randomwalk (OpProblem* problem, Configuration* configuration);
-		void initthreshold(Configuration** population, int popsize);
-		int neighborhoodChange(Configuration* s, Configuration* t, int i);
-		Configuration* firstImprovement(Configuration* s);
-		Configuration* shake(Configuration* s,int i);*/
 };
 
 /* ----------------------------------------------------------------- */
