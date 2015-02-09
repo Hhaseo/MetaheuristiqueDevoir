@@ -1,7 +1,7 @@
 # Makefile for INCOP library 
 
 CCC=g++ -std=c++11
-
+#CCC=g++ -std=c++0x
 
 LIBS= -lm 
 
@@ -82,8 +82,10 @@ color.o:		color.cc color.h  incop.h makefile
 colormain.o: 		colormain.cc incop.h color.h makefile
 	$(CCC) -c $(CFLAGS)  -o colormain.o colormain.cc
 
-colorcsp:		incopalgo.o  color.o timer.o csproblem.o incoputil.o colormain.o autotuning2.o
+colorcsp:		incopalgo.o  color.o timer.o csproblem.o incoputil.o colormain.o autotuning2.o 
 	$(CCC) $(CFLAGS) $(LDFLAGS) incopalgo.o  color.o  timer.o csproblem.o colormain.o incoputil.o autotuning2.o -o colorcsp $(LDFLAGS)
+
+#Compilation of Basic VNS By Florian Benavent and Guillaume Dequesnes
 
 impassemain.o: 		impassemain.cc incop.h color.h makefile
 	$(CCC) -c $(CFLAGS)  -o impassemain.o impassemain.cc

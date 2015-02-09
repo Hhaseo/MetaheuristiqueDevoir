@@ -1,0 +1,10 @@
+c FILE: MyTest.1
+c
+c SOURCE: Florian Benavent and Guillaume Dequesnes
+c
+c DESCRIPTION: Simple test graph, 3 nodes, all connected to each other
+c
+p edge 3 6
+e 1 2
+e 2 3
+e 3 1

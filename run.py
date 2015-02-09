@@ -5,7 +5,7 @@ import sys
 # Made for Guillaume Desquesnes & Florian Benavent homework of Metaheuristique based on Mr. Loudni script.
 
 NINSTANCES= 1 #20
-MAXTABU=1500000 #{4} -> nbmouv
+MAXTABU=10 #150000 #{4} -> nbmouv
 NB= 2#NB=20 #{3}
 NEXTNEIGH=1 #{8} -> fin voisinage ?
 DYNNEIGH=1 #{9}

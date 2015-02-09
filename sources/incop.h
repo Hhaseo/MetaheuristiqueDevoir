@@ -421,13 +421,18 @@ class KempeChain : public AbstractNeighborStructure
 class BVNSAlgorithm : public IncompleteAlgorithm
 {
 	public:
+		// Nombre max de mouvement (on prend au plus les kmax premiers mouvements de la liste)
 		int kmax;
+		// Max time required. Algorithm will stop when currentTime - startTime will be superior or equal to this value.	
 		int maxTime;
+		// Start time of the BVNS ALgorithm
 		time_t startTime;
+		// Current TIme of the system
 		time_t currTime;
 		Configuration* previous;
 		//~ Configuration* s;
 		LSAlgorithm* walkalgo;
+		// List Of Movement
 		std::vector<AbstractNeighborStructure*> movements;
 
 		NeighborhoodSearch* nbhsearch;
