@@ -1,7 +1,7 @@
 # Makefile for INCOP library 
 
-CCC=g++ -std=c++11
-#CCC=g++ -std=c++0x
+#CCC=g++ -std=c++11
+CCC=g++ -std=c++0x
 
 LIBS= -lm 
 
