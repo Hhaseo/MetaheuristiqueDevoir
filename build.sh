@@ -1,0 +1,1 @@
+make colorcsp -C sources
