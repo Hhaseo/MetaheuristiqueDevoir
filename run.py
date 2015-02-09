@@ -25,7 +25,7 @@ n=0 #{2}
 while (n <= NINSTANCES):
 	print "max_neighbours:",MAXNEIGH,":it",n	
 	#~ os.system("./sources/colorcsp out/result{2}.txt {0} {1} {2} {3} idwaincrtabu {4} {5} cv mc {6} {7} {8} {9} {10}".format(sys.argv[1],sys.argv[2],n,NB,MAXTABU,TABU,MINNEIGH,MAXNEIGH,NEXTNEIGH,DYNNEIGH,TRACE))
-	os.system("./sources/colorcsp out/"+sys.argv[1]+"_{2}.txt {0} {1} {2} {3} vns tabu {4} {5} cv mc {6} {7} {8} {9} {11} {12} {10}".format("examples/"+sys.argv[1],sys.argv[2],n,NB,
+	os.system("./sources/colorcsp out/"+sys.argv[1][9:]+"_{2}.txt {0} {1} {2} {3} vns tabu {4} {5} cv mc {6} {7} {8} {9} {11} {12} {10}".format(sys.argv[1],sys.argv[2],n,NB,
 			MAXTABU,TABU,MINNEIGH,MAXNEIGH,NEXTNEIGH,DYNNEIGH,TRACE,KMAX,TIME))
 	print
 	n += 1
