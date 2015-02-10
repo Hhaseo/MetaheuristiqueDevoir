@@ -14,8 +14,6 @@ for s in outputs:
 		duration[graph_id]  += 0.5 * float(lines[-4].split()[-1])
 
 with open("conflicts.txt",'w') as f:
+	f.write("file->conflict->duration\n")
 	for k in conflicts:
-		f.write(k+"->"+str(conflicts[k])+"\n")
-with open("duration.txt","w") as f:
-	for k in duration:
-		f.write(k+"->"+str(duration[k])+"\n")
+		f.write(k+"->"+str(conflicts[k])+"->"+str(duration[k])+"\n")
