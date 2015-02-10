@@ -1,0 +1,12 @@
+sh runDSJC1.sh
+sh runDSJC2.sh
+sh runDSJC3.sh
+sh runDSJC4.sh
+sh runflat1.sh
+sh runflat2.sh
+sh runflat3.sh
+sh runflat4.sh
+sh runle1.sh
+sh runle2.sh
+sh runle3.sh
+sh runle4.sh
