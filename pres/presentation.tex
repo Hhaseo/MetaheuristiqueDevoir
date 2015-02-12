@@ -33,7 +33,7 @@
 
 \title[Métaheuristique : Algorithme BVNS]
 {%
-	Maintien de la cohésion dans les algorithmes de nuées
+	Métaheuristique : Algorithme BVNS
 }
 \author{Guillaume~\textsc{Desquesnes} \& Florian~\textsc{Benavent}}
 \date{13 février 2015}
@@ -87,7 +87,7 @@
 	\section{Intégration dans Incop}
 		\begin{frame}{Structure de voisinage}
 			\begin{itemize}
-				\item Font le shaking
+				\item Fait le shaking
 				\item Retourne une nouvelle solution (\texttt{Configuration}) du problème
 			\end{itemize}
 		\end{frame}
@@ -95,15 +95,19 @@
 		\begin{frame}{BVNS}
 			\begin{itemize}
 				\item Surcharge d'\texttt{IncompleteAlgorithm}
-				\item Utilise une recherche locale d'Incop
+				\item Utilise une recherche locale d'Incop spécifiée en argument
 			\end{itemize}
 		\end{frame}
+		
+	\section{Demo}
 	
 	\section{Résultats}
 	
 		\begin{frame}{Description}
 			\begin{itemize}
 				\item 4 recherche de solution par instance
+				\item Recherche locale taboue
+				\item Voisinage pFlip puis Swap puis 2-Exchange puis Kempe chain
 				\item Arrêt de recherche au bout de 30 secondes ou de solution.
 				\item Affiche le nombre d'arcs en conflit
 			\end{itemize}
