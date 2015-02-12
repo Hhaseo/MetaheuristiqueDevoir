@@ -1,0 +1,124 @@
+\documentclass{beamer}
+
+\usepackage[francais]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage{beamerthemesplit}
+\usetheme{Boadilla}
+\usecolortheme{beaver}
+\setbeamertemplate{navigation symbols}{}
+\useinnertheme{circles}
+
+
+
+\defbeamertemplate*{footline}{my infolines theme}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+	\usebeamerfont{author in head/foot}\insertshortauthor~~\insertshortinstitute
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+	\usebeamerfont{title in head/foot}\insertshorttitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+	\usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+	\insertframenumber{} / \inserttotalframenumber\hspace*{2ex}
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+
+
+\title[Métaheuristique : Algorithme BVNS]
+{%
+	Maintien de la cohésion dans les algorithmes de nuées
+}
+\author{Guillaume~\textsc{Desquesnes} \& Florian~\textsc{Benavent}}
+\date{13 février 2015}
+
+\AtBeginSection[]
+{
+	\begin{frame}{Plan}
+		\begin{columns}
+			\column{0.2\textwidth}
+			\column{0.8\textwidth}
+				\tableofcontents[currentsection]
+		\end{columns}
+	\end{frame}
+}
+\begin{document}
+
+	\frame{\titlepage}
+
+	\section{Présentation}
+
+		\begin{frame}{Basic Variable Neighborhood Search}
+			\begin{itemize}
+				\item Fonction de voisinage est très importante pour la recherche globale
+				\item Utilisation plusieurs fonctions de voisinage pour améliorer la recherche
+			\end{itemize}
+		\end{frame}
+		
+		
+		\begin{frame}{Incop}
+			\begin{itemize}
+				\item Librairie C++ de résolution de problème d'optimisation
+				\item Possède des méthodes de recherche locale
+				\item Peut lire les instances DIMACS
+			\end{itemize}
+		\end{frame}
+	
+	\section{Structures de voisinage}
+		\begin{frame}{Structures de voisinage}
+			\begin{description}
+				\item[p-Flip]On modifie au plus la valeur de p variable en conflit par une autre valeur aléatoire de leur domaine.
+
+				\item[swap]\'Echange les valeurs d'une variable en conflit et de la variable la précédent ou la suivant dans la représentation des solutions.
+
+				\item[2-Exchange]\'Echange les valeurs d'une variable en conflit et d'une autre choisit aléatoirement parmis les variable restantes.
+
+				\item[Kempe chain]À partir d'une arête possédant une variable en conflit, on construit la composante connexe des variables de valeur identique à un des
+				noeuds de l'arête. On échange ensuite les valeurs des variable de la composante connexe.
+			\end{description}
+		\end{frame}
+	
+	\section{Intégration dans Incop}
+		\begin{frame}{Structure de voisinage}
+			\begin{itemize}
+				\item Font le shaking
+				\item Retourne une nouvelle solution (\texttt{Configuration}) du problème
+			\end{itemize}
+		\end{frame}
+		
+		\begin{frame}{BVNS}
+			\begin{itemize}
+				\item Surcharge d'\texttt{IncompleteAlgorithm}
+				\item Utilise une recherche locale d'Incop
+			\end{itemize}
+		\end{frame}
+	
+	\section{Résultats}
+	
+		\begin{frame}{Description}
+			\begin{itemize}
+				\item 4 recherche de solution par instance
+				\item Arrêt de recherche au bout de 30 secondes ou de solution.
+				\item Affiche le nombre d'arcs en conflit
+			\end{itemize}
+		\end{frame}
+		
+		\begin{frame}{Fichier DSJC}
+			
+		\end{frame}
+		
+		\begin{frame}{Fichier Flat}
+			
+		\end{frame}
+		
+		\begin{frame}{Fichier Le}
+			
+		\end{frame}
+	
+\end{document}
